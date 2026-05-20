@@ -17,6 +17,16 @@ npm run dev
 npm run build
 ```
 
+## Deploy
+
+The project is ready for a static Vite deployment. For Vercel, import the GitHub repository and use:
+
+- Framework preset: `Vite`
+- Build command: `npm run build`
+- Output directory: `dist`
+
+Before launch, update `https://stemcare.health/` in `index.html`, `public/robots.txt`, and `public/sitemap.xml` if the production domain changes.
+
 ## Notes
 
 - Uses the STEMCare visual language from the app landing page: clinical blue/teal accents, safety badges, glass-style product panels, and workflow language.

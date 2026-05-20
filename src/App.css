@@ -1215,7 +1215,7 @@ p {
 }
 
 .footer {
-  padding: 2rem 0;
+  padding: 2rem 0 1.7rem;
   color: #ffffff;
   background: var(--footer-bg);
 }
@@ -1233,9 +1233,18 @@ p {
 
 .footer__links {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   color: rgba(255, 255, 255, 0.72);
   font-weight: 650;
+}
+
+.footer__notice {
+  margin-top: 1.4rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1rem;
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 0.82rem;
 }
 
 @media (max-width: 1080px) {

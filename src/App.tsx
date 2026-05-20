@@ -625,8 +625,13 @@ function Footer() {
           <a href="#platform">Platform</a>
           <a href="#difference">Difference</a>
           <a href="#pilot">Pilot</a>
+          <a href="mailto:hello@stemcare.health?subject=STEMCare%20clinical%20lead%20briefing">Contact</a>
         </div>
       </div>
+      <p className="section-shell footer__notice">
+        Pre-launch product information only. STEMCare is not a medical device and does not provide
+        medical advice; clinicians retain responsibility for clinical decisions.
+      </p>
     </footer>
   );
 }
