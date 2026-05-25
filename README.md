@@ -32,4 +32,4 @@ Before launch, update `https://stemcare.health/` in `index.html`, `public/robots
 - Uses the STEMCare visual language from the app landing page: clinical blue/teal accents, safety badges, glass-style product panels, and workflow language.
 - Uses Floema-inspired reactive scroll patterns: sticky narrative panels, scroll-linked movement, changing visual states, and editorial pacing.
 - Avoids claiming autonomous diagnosis, prescribing, or completed regulatory certification. The copy frames STEMCare as clinician-controlled and safety-governed.
-- The pilot CTA currently uses `hello@stemcare.health`; update that mailto before deployment if the launch address differs.
+- The pilot CTA currently uses `stemglobalmanagement@gmail.com`; update that mailto before deployment if the launch address differs.

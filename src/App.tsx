@@ -591,7 +591,7 @@ function PilotCta() {
             narrow, measurable workflows where teams already feel the operational pain every week.
           </p>
           <div className="pilot__actions">
-            <a className="button button--primary" href="mailto:hello@stemcare.health?subject=STEMCare%20clinical%20lead%20briefing">
+            <a className="button button--primary" href="mailto:stemglobalmanagement@gmail.com?subject=STEMCare%20clinical%20lead%20briefing">
               Request pilot conversation <ArrowRight size={18} aria-hidden="true" />
             </a>
             <a className="button button--ghost" href="#platform">
@@ -625,7 +625,7 @@ function Footer() {
           <a href="#platform">Platform</a>
           <a href="#difference">Difference</a>
           <a href="#pilot">Pilot</a>
-          <a href="mailto:hello@stemcare.health?subject=STEMCare%20clinical%20lead%20briefing">Contact</a>
+          <a href="mailto:stemglobalmanagement@gmail.com?subject=STEMCare%20clinical%20lead%20briefing">Contact</a>
         </div>
       </div>
       <p className="section-shell footer__notice">
