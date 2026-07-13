@@ -1091,7 +1091,7 @@ function ClinicalLeadCase() {
             />
             <div className="clinical-photo-card">
               <span>The clinical lead perspective</span>
-              <strong>It does not ask clinicians to trust a black box. It shows the work, the source, the stop point, and the reason.</strong>
+              <strong>We don't ask clinicians to trust a black box. We show the work, the source, the stop point, and the reason.</strong>
             </div>
           </div>
         </Reveal>
@@ -1139,7 +1139,7 @@ function PilotCta() {
             <div className="pilot__actions">
               <a
                 className="button button--primary"
-                href="mailto:stemglobalmanagement@gmail.com?subject=STEMCare%20clinical%20lead%20briefing"
+                href="mailto:madesiyan@stemcare.co.uk?subject=STEMCare%20clinical%20lead%20briefing"
               >
                 Request pilot conversation <ArrowRight size={18} aria-hidden="true" />
               </a>
@@ -1179,7 +1179,7 @@ function Footer() {
           <a href="#platform">Platform</a>
           <a href="#difference">Difference</a>
           <a href="#pilot">Pilot</a>
-          <a href="mailto:stemglobalmanagement@gmail.com?subject=STEMCare%20clinical%20lead%20briefing">Contact</a>
+          <a href="mailto:madesiyan@stemcare.co.uk?subject=STEMCare%20clinical%20lead%20briefing">Contact</a>
         </div>
       </div>
       <p className="section-shell footer__notice">
