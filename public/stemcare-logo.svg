@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 120" width="520" height="120" fill="none">
+  <defs>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&amp;display=swap");
+      .logo-brand-stem {
+        font-family: "Fraunces", "Instrument Serif", Georgia, "Times New Roman", serif;
+        font-weight: 700;
+        font-size: 82px;
+        fill: #15271e;
+        letter-spacing: -0.02em;
+      }
+      .logo-brand-care {
+        font-family: "Fraunces", "Instrument Serif", Georgia, "Times New Roman", serif;
+        font-weight: 400;
+        font-style: normal;
+        font-size: 82px;
+        fill: #2d5540;
+        letter-spacing: -0.015em;
+      }
+      .botanical-leaf-main {
+        fill: url(#pineGrad);
+      }
+      .botanical-amber-accent {
+        fill: url(#amberGrad);
+      }
+    </style>
+    <linearGradient id="pineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#224231" />
+      <stop offset="100%" stop-color="#14261d" />
+    </linearGradient>
+    <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#15271e" flood-opacity="0.08" />
+    </filter>
+  </defs>
+
+  <!-- Botanical Emblem -->
+  <g transform="translate(16, 18)" filter="url(#softGlow)">
+    <!-- Primary Botanical Sprout / Stem Curve -->
+    <path class="botanical-leaf-main" d="M42 82 C38 60, 48 36, 68 22 C64 42, 54 62, 42 82 Z" />
+    <path class="botanical-leaf-main" d="M42 82 C28 66, 12 56, 4 38 C22 38, 36 54, 42 82 Z" opacity="0.85" />
+    <!-- Organic Stem Arch -->
+    <path d="M42 84 C42 46, 58 14, 76 6" stroke="url(#pineGrad)" stroke-width="5.5" stroke-linecap="round" fill="none" />
+    <!-- Warm Amber Pollen / Hearth Node -->
+    <circle class="botanical-amber-accent" cx="76" cy="6" r="6.5" />
+  </g>
+
+  <!-- Typographic Wordmark -->
+  <!-- STEM in Bold Botanical Pine -->
+  <text x="120" y="85" class="logo-brand-stem">STEM</text>
+  <!-- Care in Graceful Warm Botanical Pine -->
+  <text x="348" y="85" class="logo-brand-care">Care</text>
+  <!-- Warm Amber Terminal Accent Dot -->
+  <circle cx="504" cy="81" r="5" fill="url(#amberGrad)" />
+</svg>

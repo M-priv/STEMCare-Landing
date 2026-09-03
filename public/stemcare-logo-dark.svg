@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 120" width="520" height="120" fill="none">
+  <defs>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&amp;display=swap");
+      .logo-brand-stem-dark {
+        font-family: "Fraunces", "Instrument Serif", Georgia, "Times New Roman", serif;
+        font-weight: 700;
+        font-size: 82px;
+        fill: #fbf8f2;
+        letter-spacing: -0.02em;
+      }
+      .logo-brand-care-dark {
+        font-family: "Fraunces", "Instrument Serif", Georgia, "Times New Roman", serif;
+        font-weight: 400;
+        font-style: normal;
+        font-size: 82px;
+        fill: #86efac;
+        letter-spacing: -0.015em;
+      }
+      .botanical-leaf-dark {
+        fill: url(#pineDarkGrad);
+      }
+      .botanical-amber-dark {
+        fill: url(#amberDarkGrad);
+      }
+    </style>
+    <linearGradient id="pineDarkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ade80" />
+      <stop offset="100%" stop-color="#22c55e" />
+    </linearGradient>
+    <linearGradient id="amberDarkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+    <filter id="luminousGlow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#86efac" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <!-- Botanical Emblem Dark -->
+  <g transform="translate(16, 18)" filter="url(#luminousGlow)">
+    <path class="botanical-leaf-dark" d="M42 82 C38 60, 48 36, 68 22 C64 42, 54 62, 42 82 Z" />
+    <path class="botanical-leaf-dark" d="M42 82 C28 66, 12 56, 4 38 C22 38, 36 54, 42 82 Z" opacity="0.9" />
+    <path d="M42 84 C42 46, 58 14, 76 6" stroke="url(#pineDarkGrad)" stroke-width="5.5" stroke-linecap="round" fill="none" />
+    <circle class="botanical-amber-dark" cx="76" cy="6" r="6.5" />
+  </g>
+
+  <!-- Typographic Wordmark Dark -->
+  <text x="120" y="85" class="logo-brand-stem-dark">STEM</text>
+  <text x="348" y="85" class="logo-brand-care-dark">Care</text>
+  <circle cx="504" cy="81" r="5" fill="url(#amberDarkGrad)" />
+</svg>
