@@ -429,27 +429,6 @@ p {
 
 /* ─── Hero ────────────────────────────────────────── */
 
-.hero__video-container {
-  position: absolute;
-  inset: 0;
-  z-index: -3;
-  overflow: hidden;
-  pointer-events: none;
-  opacity: 0.08; /* Low opacity in light mode */
-  mix-blend-mode: normal; /* Overlay disappears against white, so we use normal */
-}
-
-:root[data-theme="dark"] .hero__video-container {
-  opacity: 0.25;
-  mix-blend-mode: lighten;
-}
-
-.hero__video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 .hero {
   position: relative;
   display: grid;
@@ -511,7 +490,7 @@ p {
 
 .hero__media img {
   width: 100%;
-  border-radius: 24px;
+  border-radius: 14px;
   object-fit: contain;
 }
 
@@ -569,8 +548,8 @@ p {
   bottom: 7.5%;
   z-index: 3;
   width: 352px;
-  border: 1px solid var(--line);
-  border-radius: 18px;
+  border: none;
+  border-radius: 14px;
   padding: 1rem;
   color: var(--ink);
   background: var(--surface-elevated);
@@ -661,6 +640,261 @@ p {
   background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
 }
 
+/* ─── Apple HIG Video Showcase ───────────────────── */
+
+.clinic-showcase {
+  position: relative;
+  width: 100%;
+  max-width: 680px;
+  background: var(--surface-elevated);
+  border: none;
+  border-radius: 14px;
+  padding: 1.25rem;
+  box-shadow: 0 28px 70px -12px rgba(20, 38, 29, 0.18);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  overflow: hidden;
+  transition: all 0.4s var(--ease-out-expo);
+}
+
+:root[data-theme="dark"] .clinic-showcase {
+  background: rgba(18, 31, 24, 0.78);
+  border-color: transparent;
+  box-shadow: 0 32px 80px -16px rgba(0, 0, 0, 0.7);
+}
+
+.clinic-showcase__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.9rem;
+  padding: 0 0.4rem;
+}
+
+.clinic-showcase__controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.clinic-showcase__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+}
+
+.clinic-showcase__dot--red { background: #ff5f57; }
+.clinic-showcase__dot--yellow { background: #febc2e; }
+.clinic-showcase__dot--green { background: #28c840; }
+
+.clinic-showcase__live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mint);
+  background: rgba(53, 185, 133, 0.12);
+  border: 1px solid rgba(53, 185, 133, 0.25);
+}
+
+.clinic-showcase__live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--mint);
+  box-shadow: 0 0 0 3px rgba(53, 185, 133, 0.25);
+  animation: dot-pulse 2s infinite;
+}
+
+.clinic-showcase__tabs {
+  display: flex;
+  gap: 0.35rem;
+  background: rgba(20, 38, 29, 0.05);
+  border-radius: 999px;
+  padding: 0.25rem;
+  margin-bottom: 0.9rem;
+}
+
+:root[data-theme="dark"] .clinic-showcase__tabs {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.clinic-showcase__tab {
+  flex: 1;
+  padding: 0.5rem 0.5rem;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: var(--ink-muted);
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.clinic-showcase__tab:hover {
+  color: var(--ink);
+}
+
+.clinic-showcase__tab.is-active {
+  color: var(--ink);
+  background: var(--paper-strong);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+:root[data-theme="dark"] .clinic-showcase__tab.is-active {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+}
+
+.clinic-showcase__screen {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000000;
+  border: none;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.35);
+}
+
+.clinic-showcase__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.clinic-showcase__caption {
+  margin-top: 0.9rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: rgba(20, 38, 29, 0.03);
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+:root[data-theme="dark"] .clinic-showcase__caption {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.clinic-showcase__caption-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.clinic-showcase__caption-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.clinic-showcase__caption-metric {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--brand-cyan);
+  background: var(--success-surface);
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.clinic-showcase__caption-desc {
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: var(--ink-soft);
+}
+
+/* ─── Private Clinic Metrics Strip ───────────────── */
+
+.clinic-metrics {
+  position: relative;
+  z-index: 2;
+  margin-top: -1.5rem;
+  padding: 1.5rem max(28px, calc((100% - 1180px) / 2)) 3.5rem;
+}
+
+.clinic-metrics__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.1rem;
+}
+
+@media (max-width: 960px) {
+  .clinic-metrics__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 580px) {
+  .clinic-metrics__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.clinic-metrics__card {
+  border-radius: 12px;
+  padding: 1.5rem 1.25rem;
+  background: var(--surface-elevated);
+  border: none;
+  backdrop-filter: blur(24px) saturate(170%);
+  -webkit-backdrop-filter: blur(24px) saturate(170%);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  transition: transform 0.3s var(--ease-out-expo), box-shadow 0.3s ease;
+}
+
+.clinic-metrics__card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+
+.clinic-metrics__value {
+  font-size: 1.85rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  line-height: 1.1;
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.clinic-metrics__value small {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--brand-cyan);
+}
+
+.clinic-metrics__label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  margin-top: 0.2rem;
+}
+
+.clinic-metrics__sub {
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: var(--ink-muted);
+}
+
 /* ─── Governance Animation ────────────────────────── */
 
 .gov-animation {
@@ -681,10 +915,10 @@ p {
   width: 100%;
   border-radius: 16px;
   padding: 1.1rem 1.25rem;
-  border: 1px solid var(--line);
+  border: none;
   background: var(--surface-elevated);
   backdrop-filter: blur(16px);
-  transition: border-color 400ms ease, box-shadow 400ms ease;
+  transition: box-shadow 400ms ease;
 }
 
 .gov-node--active-resident {
@@ -952,8 +1186,8 @@ p {
 
 .story__visual {
   min-height: 520px;
-  border: 1px solid var(--line);
-  border-radius: 22px;
+  border: none;
+  border-radius: 14px;
   background: var(--surface);
   box-shadow: var(--shadow);
   backdrop-filter: blur(24px);
@@ -1329,7 +1563,7 @@ p {
 }
 
 .accordion-item {
-  border: 1px solid var(--line);
+  border: none;
   border-radius: 16px;
   background: var(--paper-strong);
   overflow: hidden;
@@ -1338,13 +1572,11 @@ p {
 }
 
 .accordion-item:hover {
-  border-color: var(--line-strong);
   transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
 }
 
 .accordion-item--open {
-  border-color: var(--blue);
   box-shadow: var(--shadow);
 }
 
@@ -1575,8 +1807,8 @@ p {
   position: relative;
   overflow: hidden;
   margin-bottom: 1rem;
-  border: 1px solid var(--line);
-  border-radius: 24px;
+  border: none;
+  border-radius: 14px;
   background: var(--surface-solid);
   box-shadow: var(--shadow-soft);
 }
@@ -2048,3 +2280,217 @@ p {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* ─── Apple HIG Waitlist Form & Founding Cohort ────── */
+
+.waitlist-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: none;
+  border-radius: 14px;
+  padding: 2.2rem;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+.waitlist-card h3 {
+  font-size: 1.45rem;
+  color: #ffffff;
+  margin-bottom: 0.4rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.waitlist-card__subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  margin-bottom: 1.5rem;
+}
+
+.waitlist-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.waitlist-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+@media (max-width: 600px) {
+  .waitlist-form__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.waitlist-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.waitlist-field label {
+  font-size: 0.78rem;
+  font-weight: 550;
+  color: rgba(255, 255, 255, 0.78);
+  letter-spacing: 0.02em;
+}
+
+.waitlist-input {
+  width: 100%;
+  padding: 0.72rem 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.waitlist-input:focus {
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(0, 0, 0, 0.45);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.waitlist-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.waitlist-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255, 255, 255, 0.5)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  background-size: 14px;
+  padding-right: 2.2rem;
+  cursor: pointer;
+}
+
+.waitlist-select option {
+  background: #181c20;
+  color: #ffffff;
+}
+
+.waitlist-submit {
+  width: 100%;
+  padding: 0.85rem 1.4rem;
+  border-radius: 10px;
+  border: none;
+  background: #ffffff;
+  color: #121417;
+  font-size: 0.95rem;
+  font-weight: 650;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  margin-top: 0.4rem;
+}
+
+.waitlist-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.25);
+  background: #f0f0f0;
+}
+
+.waitlist-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.waitlist-social-proof {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.waitlist-success {
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.waitlist-success__icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: #22c55e;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.waitlist-success h4 {
+  font-size: 1.25rem;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+  font-weight: 650;
+}
+
+.waitlist-success p {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-top: 0 !important;
+}
+
+.pilot__partners-strip {
+  margin-top: 1.8rem;
+  padding: 1.25rem 1.4rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+}
+
+:root[data-theme="dark"] .pilot__partners-strip {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.pilot__partners-title {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--brand-cyan);
+  margin-bottom: 0.75rem;
+}
+
+.pilot__partners-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.pilot__partners-list li {
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.pilot__partners-list strong {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+

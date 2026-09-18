@@ -28,6 +28,7 @@ import {
   useMotionValue,
   AnimatePresence,
 } from "framer-motion";
+import { submitWaitlistSignup } from "./lib/supabase";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -240,6 +241,7 @@ function App() {
         onThemeToggle={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
       />
       <Hero />
+      <PrivateClinicMetrics />
       <IntroBand />
       <HumanBand />
       <StorySection />
@@ -285,7 +287,7 @@ function Navigation({
           <a href="#platform">Platform</a>
           <a href="#difference">Difference</a>
           <a href="#clinical-leads">Clinical leads</a>
-          <a href="#pilot">Pilot</a>
+          <a href="#pilot">Founding Cohort</a>
         </div>
         <button
           className="nav__theme"
@@ -329,28 +331,150 @@ const heroMediaVariant = {
   show: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.9, ease: EASE_OUT_EXPO, delay: 0.3 } },
 };
 
-function Hero() {
-  const prefersReduced = useReducedMotion();
-  const { scrollY } = useScroll();
-  const mediaY = useTransform(scrollY, [0, 900], [0, -110]);
-  const textY = useTransform(scrollY, [0, 700], [0, 44]);
-  const textOpacity = useTransform(scrollY, [0, 620], [1, 0.35]);
-  const boardY = useTransform(scrollY, [0, 900], [0, -76]);
+// ─── Clinic Video Showcase ───────────────────────────────────────────────────
+
+const CLINIC_VIDEOS = [
+  {
+    id: "triage",
+    tabLabel: "01 / Intake & Triage",
+    title: "E-Consult Intake & Red-Flag Triage",
+    metric: "Saves ~15m / consult",
+    desc: "Unstructured patient complaints and medical history are synthesized into structured clinical briefings before the appointment begins.",
+    src: "/videos/stemcare-triage-demo.mp4",
+    poster: "/videos/stemcare-triage-poster.jpg",
+  },
+  {
+    id: "medgemma",
+    tabLabel: "02 / MedGemma Notes",
+    title: "MedGemma Clinical Consultation Synthesis",
+    metric: "100% Doctor-in-the-loop",
+    desc: "Drafts comprehensive SOAP notes, differential considerations, and guideline-referenced management plans with one-click verification.",
+    src: "/videos/stemcare-medgemma-demo.mp4",
+    poster: "/videos/stemcare-medgemma-poster.jpg",
+  },
+  {
+    id: "referral",
+    tabLabel: "03 / Referral Loops",
+    title: "Referral Architect & Specialist Letters",
+    metric: "Drafted in < 60s",
+    desc: "Drafts outbound specialist referral letters and automates follow-up tracking, ensuring high-value cases never stall.",
+    src: "/videos/stemcare-referral-demo.mp4",
+    poster: "/videos/stemcare-referral-poster.jpg",
+  },
+];
+
+function ClinicVideoShowcase() {
+  const [activeTab, setActiveTab] = useState(0);
+  const video = CLINIC_VIDEOS[activeTab];
 
   return (
-    <section className="hero" id="top" aria-labelledby="hero-title">
-      {/* Background Video */}
-      <div className="hero__video-container" aria-hidden="true">
-        <video 
-          className="hero__video" 
-          src="/hero-bg.mp4" 
-          autoPlay 
-          loop 
-          muted 
+    <div className="clinic-showcase" id="videoshowcase">
+      <div className="clinic-showcase__header">
+        <div className="clinic-showcase__controls" aria-hidden="true">
+          <span className="clinic-showcase__dot clinic-showcase__dot--red" />
+          <span className="clinic-showcase__dot clinic-showcase__dot--yellow" />
+          <span className="clinic-showcase__dot clinic-showcase__dot--green" />
+        </div>
+
+      </div>
+
+      <div className="clinic-showcase__tabs" role="tablist" aria-label="Clinical workflows">
+        {CLINIC_VIDEOS.map((v, i) => (
+          <button
+            key={v.id}
+            role="tab"
+            aria-selected={activeTab === i}
+            className={`clinic-showcase__tab ${activeTab === i ? "is-active" : ""}`}
+            onClick={() => setActiveTab(i)}
+            type="button"
+          >
+            {v.tabLabel}
+          </button>
+        ))}
+      </div>
+
+      <div className="clinic-showcase__screen">
+        <video
+          key={video.id}
+          className="clinic-showcase__video"
+          src={video.src}
+          poster={video.poster}
+          autoPlay
+          loop
+          muted
           playsInline
         />
       </div>
 
+      <div className="clinic-showcase__caption">
+        <div className="clinic-showcase__caption-top">
+          <span className="clinic-showcase__caption-title">{video.title}</span>
+          <span className="clinic-showcase__caption-metric">{video.metric}</span>
+        </div>
+        <p className="clinic-showcase__caption-desc">{video.desc}</p>
+      </div>
+    </div>
+  );
+}
+
+// ─── Private Clinic Metrics ───────────────────────────────────────────────────
+
+function PrivateClinicMetrics() {
+  const metrics = [
+    {
+      value: "10+",
+      unit: "Hours",
+      label: "Saved per Doctor / Week",
+      sub: "Eliminate late-night dictation, SOAP documentation backlog, and manual typing.",
+    },
+    {
+      value: "< 60",
+      unit: "Seconds",
+      label: "Specialist Referral Drafting",
+      sub: "Instant clinical letters verified against private medical & hospital guidelines.",
+    },
+    {
+      value: "100%",
+      unit: "Doctor Control",
+      label: "Zero Unsupervised Action",
+      sub: "Deterministic Guardian safety gates ensure every output requires clinician sign-off.",
+    },
+    {
+      value: "Enterprise",
+      unit: "Security",
+      label: "Sovereign Clinical Privacy",
+      sub: "Built to NHS DSP Toolkit, UK GDPR & HIPAA equivalent controls. Zero model training on identifiable patient data.",
+    },
+  ];
+
+  return (
+    <section className="clinic-metrics" aria-label="Private Practice Operational Metrics">
+      <div className="clinic-metrics__grid">
+        {metrics.map((m, idx) => (
+          <Reveal key={m.label} delay={idx * 0.08} className="clinic-metrics__card">
+            <div className="clinic-metrics__value">
+              {m.value} <small>{m.unit}</small>
+            </div>
+            <div className="clinic-metrics__label">{m.label}</div>
+            <div className="clinic-metrics__sub">{m.sub}</div>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ─── Hero ─────────────────────────────────────────────────────────────────────
+
+function Hero() {
+  const prefersReduced = useReducedMotion();
+  const { scrollY } = useScroll();
+  const mediaY = useTransform(scrollY, [0, 900], [0, -70]);
+  const textY = useTransform(scrollY, [0, 700], [0, 44]);
+  const textOpacity = useTransform(scrollY, [0, 620], [1, 0.35]);
+
+  return (
+    <section className="hero" id="top" aria-labelledby="hero-title">
       {/* Animated ambient glow */}
       <div className="hero__ambient-glow" aria-hidden="true" />
       <div className="hero__ambient" aria-hidden="true" />
@@ -366,7 +490,7 @@ function Hero() {
           className="eyebrow hero__eyebrow"
           variants={prefersReduced ? undefined : heroItemVariant}
         >
-          Safety-governed clinical operations
+          Private Healthcare & Specialist Operations
         </motion.p>
         <motion.h1
           id="hero-title"
@@ -379,8 +503,8 @@ function Hero() {
           className="hero__statement"
           variants={prefersReduced ? undefined : heroItemVariant}
         >
-          The clinical operating system for primary care teams that need every referral, result,
-          prescription, aftercare plan, and patient update to move with evidence and control.
+          Eliminate 10+ hours of clinical dictation and referral backlog every week.
+          STEMCare synthesizes patient intake, drafts structured consultation notes, and tracks specialist referrals in 60 seconds—with deterministic clinical safety.
         </motion.p>
         <motion.div
           className="hero__actions"
@@ -388,10 +512,10 @@ function Hero() {
           variants={prefersReduced ? undefined : heroItemVariant}
         >
           <a className="button button--primary" href="#pilot">
-            Request clinical lead briefing <ArrowRight size={18} aria-hidden="true" />
+            Book 15-Min Private Practice Demo <ArrowRight size={18} aria-hidden="true" />
           </a>
-          <a className="button button--ghost" href="#difference">
-            See why it is different
+          <a className="button button--ghost" href="#videoshowcase">
+            Watch Live Platform Demo
           </a>
         </motion.div>
       </motion.div>
@@ -403,31 +527,7 @@ function Hero() {
         animate="show"
         style={prefersReduced ? undefined : { y: mediaY }}
       >
-        <GovernanceAnimation />
-      </motion.div>
-
-      <motion.div
-        className="hero__board"
-        style={prefersReduced ? undefined : { y: boardY }}
-        initial={prefersReduced ? false : { opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: EASE_OUT_EXPO, delay: 0.7 }}
-        aria-hidden="true"
-      >
-        <div className="board__topline">
-          <span className="status-dot" />
-          Clinical Suite
-        </div>
-        <p className="board__command">Get this patient ready for review this afternoon.</p>
-        <div className="board__plan">
-          <span>Context gathered</span>
-          <span>Evidence checked</span>
-          <span>Guardian review</span>
-        </div>
-        <div className="board__notice">
-          <ShieldCheck size={16} />
-          Clinician approval required before clinical action.
-        </div>
+        <ClinicVideoShowcase />
       </motion.div>
 
       <div className="hero__next-hint" aria-hidden="true">
@@ -1089,10 +1189,6 @@ function ClinicalLeadCase() {
               alt="A GP and practice manager reviewing clinical workflow data together on a monitor in a modern primary care practice"
               loading="lazy"
             />
-            <div className="clinical-photo-card">
-              <span>The clinical lead perspective</span>
-              <strong>We don't ask clinicians to trust a black box. We show the work, the source, the stop point, and the reason.</strong>
-            </div>
           </div>
         </Reveal>
         <div className="module-grid">
@@ -1121,6 +1217,155 @@ function ClinicalLeadCase() {
   );
 }
 
+// ─── Waitlist Card (Founding Cohort) ──────────────────────────────────────────
+
+function WaitlistCard() {
+  const [fullName, setFullName] = useState("");
+  const [workEmail, setWorkEmail] = useState("");
+  const [role, setRole] = useState("GP Partner / Clinical Lead");
+  const [practiceName, setPracticeName] = useState("");
+  const [practiceSize, setPracticeSize] = useState("4–8 GPs (Medium Practice)");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!workEmail || !fullName || !practiceName) return;
+
+    setIsSubmitting(true);
+    await submitWaitlistSignup({
+      fullName,
+      workEmail,
+      role,
+      practiceName,
+      practiceSize,
+    });
+    setIsSubmitting(false);
+    setIsSubmitted(true);
+  };
+
+  if (isSubmitted) {
+    return (
+      <div className="waitlist-card waitlist-success" aria-live="polite">
+        <div className="waitlist-success__icon">
+          <CheckCircle2 size={28} />
+        </div>
+        <h4>Application Received</h4>
+        <p>
+          Thank you, {fullName.split(" ")[0] || "Doctor"}. Your clinic has been registered for the STEMCare Private Practice Cohort.
+        </p>
+        <p style={{ marginTop: "0.8rem", color: "rgba(255, 255, 255, 0.6)", fontSize: "0.82rem" }}>
+          Our team will reach out directly to {workEmail} within 24 hours to coordinate your practice briefing or provision your pilot environment.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="waitlist-card" aria-label="Clinical Practice Pilot Application Form">
+      <h3>Book 15-Min Demo or Pilot Access</h3>
+      <p className="waitlist-card__subtitle">
+        Turnkey setup, custom clinical templates, and dedicated engineering SLA for partner clinics and practices.
+      </p>
+
+      <form className="waitlist-form" onSubmit={handleSubmit}>
+        <div className="waitlist-form__row">
+          <div className="waitlist-field">
+            <label htmlFor="wl-name">Full Name</label>
+            <input
+              id="wl-name"
+              className="waitlist-input"
+              type="text"
+              placeholder="Dr. Sarah Jenkins"
+              required
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+            />
+          </div>
+          <div className="waitlist-field">
+            <label htmlFor="wl-email">Work Email</label>
+            <input
+              id="wl-email"
+              className="waitlist-input"
+              type="email"
+              placeholder="s.jenkins@privatepractice.co.uk"
+              required
+              value={workEmail}
+              onChange={(e) => setWorkEmail(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="waitlist-form__row">
+          <div className="waitlist-field">
+            <label htmlFor="wl-role">Your Role</label>
+            <select
+              id="wl-role"
+              className="waitlist-input waitlist-select"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+            >
+              <option value="Private Practice Owner / Clinical Director">Private Practice Owner / Clinical Director</option>
+              <option value="Practice Manager (Private / Specialist)">Practice Manager (Private / Specialist)</option>
+              <option value="Specialist Consultant / Private Physician">Specialist Consultant / Private Physician</option>
+              <option value="GP Partner / NHS Clinical Lead">GP Partner / NHS Clinical Lead</option>
+              <option value="PCN Clinical Director">PCN Clinical Director</option>
+              <option value="Other Healthcare Leader">Other Healthcare Leader</option>
+            </select>
+          </div>
+          <div className="waitlist-field">
+            <label htmlFor="wl-size">Clinic / Practice Size</label>
+            <select
+              id="wl-size"
+              className="waitlist-input waitlist-select"
+              value={practiceSize}
+              onChange={(e) => setPracticeSize(e.target.value)}
+            >
+              <option value="Solo Specialist / Single Doctor">Solo Specialist / Single Doctor</option>
+              <option value="2–5 Clinicians (Boutique Clinic)">2–5 Clinicians (Boutique Clinic)</option>
+              <option value="6–15 Clinicians (Multi-Specialty Clinic)">6–15 Clinicians (Multi-Specialty Clinic)</option>
+              <option value="Multi-Site / Healthcare Group">Multi-Site / Healthcare Group</option>
+              <option value="NHS Practice / PCN">NHS Practice / PCN</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="waitlist-field">
+          <label htmlFor="wl-practice">Clinic / Organisation Name</label>
+          <input
+            id="wl-practice"
+            className="waitlist-input"
+            type="text"
+            placeholder="e.g. Cavendish Medical Clinic"
+            required
+            value={practiceName}
+            onChange={(e) => setPracticeName(e.target.value)}
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="waitlist-submit"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            "Submitting..."
+          ) : (
+            <>
+              Request 15-Min Demo or Pilot Access <ArrowRight size={16} aria-hidden="true" />
+            </>
+          )}
+        </button>
+
+        <div className="waitlist-social-proof">
+          <ShieldCheck size={14} style={{ color: "var(--warm, #e0a96d)" }} />
+          <span>UK GDPR & NHS DSP Toolkit Compliant • Zero data sold or shared</span>
+        </div>
+      </form>
+    </div>
+  );
+}
+
 // ─── Pilot CTA ────────────────────────────────────────────────────────────────
 
 function PilotCta() {
@@ -1129,41 +1374,35 @@ function PilotCta() {
       <div className="section-shell pilot__grid">
         <Reveal>
           <div>
-            <p className="eyebrow">Pre-launch clinical briefing</p>
-            <h2 id="pilot-title">Bring STEMCare into the room <em>before the product launches.</em></h2>
+            <p className="eyebrow">Clinical Practice Pilot Cohort</p>
+            <h2 id="pilot-title">Bring STEMCare into your clinic <em>with dedicated white-glove onboarding.</em></h2>
             <p>
-              Use this site to open conversations with GPs, practice managers, PCN leaders,
-              urgent-care teams, and clinical transformation leads. The strongest first pilots are
-              narrow, measurable workflows where teams already feel the operational pain every week.
+              We are onboarding our founding cohort of private clinics, outpatient practices, and clinical teams.
+              Partner practices receive customized specialist templates, turnkey intake configuration,
+              and a direct clinical engineering SLA.
             </p>
+
             <div className="pilot__actions">
               <a
-                className="button button--primary"
-                href="mailto:madesiyan@stemcare.co.uk?subject=STEMCare%20clinical%20lead%20briefing"
+                className="button button--ghost"
+                href="mailto:madesiyan@stemcare.co.uk?subject=STEMCare%20Practice%20Inquiry"
               >
-                Request pilot conversation <ArrowRight size={18} aria-hidden="true" />
+                Contact Us
               </a>
-              <a className="button button--ghost" href="#platform">
-                Revisit the platform thesis
+              <a className="button button--ghost" href="#videoshowcase">
+                Watch platform walkthrough
               </a>
             </div>
           </div>
         </Reveal>
         <Reveal delay={0.15}>
-          <div className="pilot-card" aria-label="Recommended pilot shape">
-            <span>Recommended first pilot</span>
-            <h3>One workflow. One team. One safety boundary.</h3>
-            <ul>
-              <li>Pick a high-friction queue such as results, referrals, prescriptions, or aftercare.</li>
-              <li>Define what AI may draft, retrieve, route, and never decide.</li>
-              <li>Measure time saved, handoff quality, review burden, and escalation safety.</li>
-            </ul>
-          </div>
+          <WaitlistCard />
         </Reveal>
       </div>
     </section>
   );
 }
+
 
 // ─── Footer ───────────────────────────────────────────────────────────────────
 
