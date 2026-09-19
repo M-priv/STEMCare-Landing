@@ -345,8 +345,8 @@ const CLINIC_VIDEOS = [
   },
   {
     id: "medgemma",
-    tabLabel: "02 / MedGemma Notes",
-    title: "MedGemma Clinical Consultation Synthesis",
+    tabLabel: "02 / Consultation Synthesis",
+    title: "Clinical Consultation & SOAP Synthesis",
     metric: "100% Doctor-in-the-loop",
     desc: "Drafts comprehensive SOAP notes, differential considerations, and guideline-referenced management plans with one-click verification.",
     src: "/videos/stemcare-medgemma-demo.mp4",
@@ -440,25 +440,44 @@ function PrivateClinicMetrics() {
       sub: "Deterministic Guardian safety gates ensure every output requires clinician sign-off.",
     },
     {
-      value: "Enterprise",
-      unit: "Security",
+      value: "Zero",
+      unit: "Training",
       label: "Sovereign Clinical Privacy",
-      sub: "Built to NHS DSP Toolkit, UK GDPR & HIPAA equivalent controls. Zero model training on identifiable patient data.",
+      sub: "Strict clinical isolation. Zero model training on patient records or identifiable health data.",
     },
   ];
 
   return (
     <section className="clinic-metrics" aria-label="Private Practice Operational Metrics">
-      <div className="clinic-metrics__grid">
-        {metrics.map((m, idx) => (
-          <Reveal key={m.label} delay={idx * 0.08} className="clinic-metrics__card">
+      <div className="clinic-metrics__strip">
+        {metrics.map((m) => (
+          <div key={m.label} className="clinic-metrics__item">
             <div className="clinic-metrics__value">
               {m.value} <small>{m.unit}</small>
             </div>
             <div className="clinic-metrics__label">{m.label}</div>
             <div className="clinic-metrics__sub">{m.sub}</div>
-          </Reveal>
+          </div>
         ))}
+      </div>
+
+      <div className="clinic-compliance-bar" aria-label="Governance & compliance standards">
+        <div className="clinic-compliance-item">
+          <ShieldCheck size={14} aria-hidden="true" />
+          <span>NHS DSP Toolkit Standard Met</span>
+        </div>
+        <div className="clinic-compliance-item">
+          <LockKeyhole size={14} aria-hidden="true" />
+          <span>UK GDPR & Data Protection Act 2018</span>
+        </div>
+        <div className="clinic-compliance-item">
+          <CheckCircle2 size={14} aria-hidden="true" />
+          <span>Zero Training on Patient Identifiers</span>
+        </div>
+        <div className="clinic-compliance-item">
+          <Database size={14} aria-hidden="true" />
+          <span>UK Sovereign Data Locality</span>
+        </div>
       </div>
     </section>
   );
@@ -499,11 +518,16 @@ function Hero() {
         >
           <LogoLockup variant="hero" />
         </motion.h1>
-        <motion.p
-          className="hero__statement"
+        <motion.h2
+          className="hero__headline"
           variants={prefersReduced ? undefined : heroItemVariant}
         >
-          Eliminate 10+ hours of clinical dictation and referral backlog every week.
+          Eliminate 10+ hours of clinical admin weekly.
+        </motion.h2>
+        <motion.p
+          className="hero__subhead"
+          variants={prefersReduced ? undefined : heroItemVariant}
+        >
           STEMCare synthesizes patient intake, drafts structured consultation notes, and tracks specialist referrals in 60 seconds—with deterministic clinical safety.
         </motion.p>
         <motion.div
@@ -512,10 +536,10 @@ function Hero() {
           variants={prefersReduced ? undefined : heroItemVariant}
         >
           <a className="button button--primary" href="#pilot">
-            Book 15-Min Private Practice Demo <ArrowRight size={18} aria-hidden="true" />
+            Book 15-Min Demo <ArrowRight size={16} aria-hidden="true" />
           </a>
-          <a className="button button--ghost" href="#videoshowcase">
-            Watch Live Platform Demo
+          <a className="hero__link-secondary" href="#videoshowcase">
+            Watch live platform demo <ArrowRight size={14} aria-hidden="true" />
           </a>
         </motion.div>
       </motion.div>
@@ -751,23 +775,175 @@ function GovernanceAnimation() {
 // ─── Intro Band ───────────────────────────────────────────────────────────────
 
 function IntroBand() {
-  return (
-    <section className="intro-band" aria-label="STEMCare thesis">
-      <div className="section-shell intro-band__grid">
-        <Reveal>
+  const introRef = useRef<HTMLElement | null>(null);
+  const shellRef = useRef<HTMLDivElement | null>(null);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const prefersReduced = useReducedMotion();
+  const [centerX, setCenterX] = useState(0);
+  const scrollYProgress = useMotionValue(0);
+
+  const MAX_SCALE = 1.32;
+
+  useEffect(() => {
+    const update = () => {
+      if (!introRef.current) return;
+      const rect = introRef.current.getBoundingClientRect();
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const sectionTop = rect.top + scrollTop;
+      const sectionHeight = introRef.current.offsetHeight;
+      const scrollDistance = sectionHeight - window.innerHeight;
+      if (scrollDistance <= 0) return;
+      const currentScroll = window.scrollY;
+      const rawProgress = (currentScroll - sectionTop) / scrollDistance;
+      const clampedProgress = Math.max(0, Math.min(1, rawProgress));
+      scrollYProgress.set(clampedProgress);
+
+      if (shellRef.current && wrapRef.current) {
+        const shellWidth = shellRef.current.offsetWidth;
+        const headingWidth = wrapRef.current.offsetWidth;
+        // With transformOrigin "center left", visual width at MAX_SCALE is headingWidth * MAX_SCALE.
+        // We place visual center at shellWidth / 2:
+        // x + (headingWidth * MAX_SCALE) / 2 = shellWidth / 2
+        // => x = (shellWidth - headingWidth * MAX_SCALE) / 2
+        const offset = Math.max(0, (shellWidth - headingWidth * MAX_SCALE) / 2);
+        setCenterX(offset);
+      }
+    };
+
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    const ro = new ResizeObserver(update);
+    if (shellRef.current) ro.observe(shellRef.current);
+    if (wrapRef.current) ro.observe(wrapRef.current);
+    update();
+
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      ro.disconnect();
+    };
+  }, [scrollYProgress]);
+
+  // Background fade into focus, then softly dissolve before unpinning to avoid harsh edges
+  const bgOpacity = useTransform(scrollYProgress, [0, 0.12, 0.84, 0.98], [0, 1, 1, 0]);
+
+  // Eyebrow reveal
+  const eyebrowOpacity = useTransform(scrollYProgress, [0.06, 0.16], [0, 1]);
+  const eyebrowY = useTransform(scrollYProgress, [0.06, 0.16], [16, 0]);
+
+  // Sentence 1: "Healthcare does not need more AI theatre."
+  const s1Opacity = useTransform(scrollYProgress, [0.08, 0.20], [0, 1]);
+  const s1Y = useTransform(scrollYProgress, [0.08, 0.20], [20, 0]);
+
+  // Sentence 2: "It needs governed follow-through."
+  const s2Opacity = useTransform(scrollYProgress, [0.20, 0.34], [0, 1]);
+  const s2Y = useTransform(scrollYProgress, [0.20, 0.34], [20, 0]);
+
+  // Movement & rescale: From centered & enlarged to left column & standard size
+  // Pacing: 0.34-0.46 is the hold in center, 0.46-0.60 is the smooth glide & scale down
+  const headingScale = useTransform(scrollYProgress, (p) => {
+    if (p <= 0.46) return MAX_SCALE;
+    if (p >= 0.60) return 1;
+    const ratio = (p - 0.46) / (0.60 - 0.46);
+    return MAX_SCALE - (MAX_SCALE - 1) * ratio;
+  });
+
+  const headingX = useTransform(scrollYProgress, (p) => {
+    if (p <= 0.46) return `${centerX}px`;
+    if (p >= 0.60) return "0px";
+    const ratio = (p - 0.46) / (0.60 - 0.46);
+    return `${centerX * (1 - ratio)}px`;
+  });
+
+  // Right-hand narrative block reveal: docks cleanly between 0.56 and 0.68, leaving 0.68-1.00 for comfortable reading
+  const rightOpacity = useTransform(scrollYProgress, [0.56, 0.68], [0, 1]);
+  const rightY = useTransform(scrollYProgress, [0.56, 0.68], [24, 0]);
+  const rightPointerEvents = useTransform(scrollYProgress, (p) => (p >= 0.60 ? "auto" : "none"));
+
+  if (prefersReduced) {
+    return (
+      <section className="intro-band intro-band--static" aria-label="STEMCare thesis">
+        <div className="section-shell intro-band__grid">
           <div>
             <p className="eyebrow">The thesis</p>
-            <h2>Healthcare does not need more AI theatre. <em>It needs governed follow-through.</em></h2>
+            <h2>
+              <span className="intro-band__sentence intro-band__sentence--1">
+                Healthcare does not need more AI theatre.
+              </span>
+              <span className="intro-band__sentence intro-band__sentence--2">
+                <em>It needs governed follow-through.</em>
+              </span>
+            </h2>
           </div>
-        </Reveal>
-        <Reveal delay={0.12}>
           <p>
             The pressure in primary care is not only consultation volume. It is the operational drag
             around care: documents, results, referrals, prescribing, admin queues, patient updates,
             and unresolved handoffs. STEMCare is designed to help teams move that work safely through
             a shared clinical operating loop.
           </p>
-        </Reveal>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="intro-band intro-band--cinematic" ref={introRef} aria-label="STEMCare thesis">
+      <div className="intro-band__sticky">
+        {/* Immersive background transition */}
+        <motion.div
+          className="intro-band__backdrop"
+          style={{ opacity: bgOpacity }}
+          aria-hidden="true"
+        />
+
+        <div className="section-shell intro-band__grid" ref={shellRef}>
+          <motion.div
+            ref={wrapRef}
+            className="intro-band__headline-wrap"
+            style={{
+              x: headingX,
+              scale: headingScale,
+              transformOrigin: "center left",
+            }}
+          >
+            <motion.p
+              className="eyebrow"
+              style={{ opacity: eyebrowOpacity, y: eyebrowY }}
+            >
+              The thesis
+            </motion.p>
+            <h2 className="intro-band__headline">
+              <motion.span
+                className="intro-band__sentence intro-band__sentence--1"
+                style={{ opacity: s1Opacity, y: s1Y }}
+              >
+                Healthcare does not need more AI theatre.
+              </motion.span>
+              <motion.span
+                className="intro-band__sentence intro-band__sentence--2"
+                style={{ opacity: s2Opacity, y: s2Y }}
+              >
+                <em>It needs governed follow-through.</em>
+              </motion.span>
+            </h2>
+          </motion.div>
+
+          <motion.div
+            className="intro-band__narrative"
+            style={{
+              opacity: rightOpacity,
+              y: rightY,
+              pointerEvents: rightPointerEvents,
+            }}
+          >
+            <p>
+              The pressure in primary care is not only consultation volume. It is the operational drag
+              around care: documents, results, referrals, prescribing, admin queues, patient updates,
+              and unresolved handoffs. STEMCare is designed to help teams move that work safely through
+              a shared clinical operating loop.
+            </p>
+          </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -778,21 +954,16 @@ function IntroBand() {
 function HumanBand() {
   return (
     <section className="human-band" aria-labelledby="human-band-title">
-      <div className="human-band__inner">
-        <Reveal className="human-band__image">
-          <img
-            src="/practice-in-motion.jpg"
-            alt="A nurse reviewing patient information on a tablet while walking through a busy NHS primary care practice, with a receptionist at a screen in the background"
-            loading="lazy"
-          />
-        </Reveal>
-        <div className="human-band__copy">
+      <div className="section-shell">
+        <div className="human-band__content">
           <Reveal>
             <p className="eyebrow">Clinicians first</p>
-            <h2 id="human-band-title">The people don’t change. <em>What drags them down does.</em></h2>
+            <h2 id="human-band-title">
+              The people don’t change. <em>What drags them down does.</em>
+            </h2>
           </Reveal>
           <Reveal delay={0.1}>
-            <p>
+            <p className="human-band__lead">
               STEMCare is not a replacement for clinical judgment. It is infrastructure that removes
               the invisible operational weight around it — so that GPs, nurses, and practice managers
               can do what they trained to do, with the time and clarity to do it well.
@@ -825,17 +996,37 @@ function HumanBand() {
 function StorySection() {
   const storyRef = useRef<HTMLElement | null>(null);
   const [active, setActive] = useState(0);
-  const { scrollYProgress } = useScroll({
-    target: storyRef,
-    offset: ["start start", "end end"],
-  });
+  const scrollYProgress = useMotionValue(0);
+
+  useEffect(() => {
+    const update = () => {
+      if (!storyRef.current) return;
+      const rect = storyRef.current.getBoundingClientRect();
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const sectionTop = rect.top + scrollTop;
+      const sectionHeight = storyRef.current.offsetHeight;
+      const scrollDistance = sectionHeight - window.innerHeight;
+      if (scrollDistance <= 0) return;
+      const currentScroll = window.scrollY;
+      const rawProgress = (currentScroll - sectionTop) / scrollDistance;
+      const clampedProgress = Math.max(0, Math.min(1, rawProgress));
+      scrollYProgress.set(clampedProgress);
+      const next = Math.min(storySteps.length - 1, Math.floor(clampedProgress * storySteps.length));
+      setActive(next);
+    };
+
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    update();
+
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [scrollYProgress]);
+
   const visualY = useTransform(scrollYProgress, [0, 1], [36, -36]);
   const visualRotate = useTransform(scrollYProgress, [0, 1], [-1.4, 1.4]);
-
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    const next = Math.min(storySteps.length - 1, Math.floor(latest * storySteps.length));
-    setActive(next);
-  });
 
   const activeStep = storySteps[active];
   // Update story step titles with em emphasis
@@ -1123,7 +1314,7 @@ function AiDifference() {
       <div className="section-shell ai-difference__grid">
         <Reveal className="ai-difference__copy">
           <p className="eyebrow">How AI is used</p>
-          <h2 id="ai-title">Not magic. Not autonomy theatre. <em>A supervised clinical workforce.</em></h2>
+          <h2 id="ai-title">Not black-box automation. <em>A supervised clinical workforce.</em></h2>
           <p>
             STEMCare treats models as one part of a governed operating system. The AI is useful
             because it has the right context, narrow permissions, visible receipts, and a clear
@@ -1180,15 +1371,6 @@ function ClinicalLeadCase() {
               The promise is not that AI replaces clinical skill. The promise is that clinical skill
               is no longer buried under unmanaged handoffs, admin drag, and disconnected tools.
             </p>
-          </div>
-        </Reveal>
-        <Reveal delay={0.1}>
-          <div className="clinical-photo-panel">
-            <img
-              src="/clinical-team-collaboration.jpg"
-              alt="A GP and practice manager reviewing clinical workflow data together on a monitor in a modern primary care practice"
-              loading="lazy"
-            />
           </div>
         </Reveal>
         <div className="module-grid">
@@ -1263,7 +1445,7 @@ function WaitlistCard() {
 
   return (
     <div className="waitlist-card" aria-label="Clinical Practice Pilot Application Form">
-      <h3>Book 15-Min Demo or Pilot Access</h3>
+      <h3>Request Pilot Access</h3>
       <p className="waitlist-card__subtitle">
         Turnkey setup, custom clinical templates, and dedicated engineering SLA for partner clinics and practices.
       </p>
@@ -1352,14 +1534,14 @@ function WaitlistCard() {
             "Submitting..."
           ) : (
             <>
-              Request 15-Min Demo or Pilot Access <ArrowRight size={16} aria-hidden="true" />
+              Request Access <ArrowRight size={16} aria-hidden="true" />
             </>
           )}
         </button>
 
         <div className="waitlist-social-proof">
           <ShieldCheck size={14} style={{ color: "var(--warm, #e0a96d)" }} />
-          <span>UK GDPR & NHS DSP Toolkit Compliant • Zero data sold or shared</span>
+          <span>UK GDPR &amp; NHS DSP Toolkit Compliant • Zero data sold or shared</span>
         </div>
       </form>
     </div>
