@@ -769,6 +769,13 @@ p {
   border-radius: 999px;
   padding: 0.25rem;
   margin-bottom: 0.9rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.clinic-showcase__tabs::-webkit-scrollbar {
+  display: none;
 }
 
 :root[data-theme="dark"] .clinic-showcase__tabs {
@@ -1237,19 +1244,28 @@ p {
     min-height: auto;
     padding: 5rem 0;
   }
+  .intro-band--static {
+    padding: 4.5rem 0;
+  }
   .intro-band__sticky {
     position: relative;
     height: auto;
     padding: 0;
     overflow: visible;
   }
+  .section-shell.intro-band__grid,
   .intro-band__grid {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
+    grid-template-columns: 1fr !important;
+    gap: 2.25rem !important;
+    width: min(100% - 36px, 1060px);
   }
   .intro-band__headline-wrap {
     transform: none !important;
     max-width: 100%;
+  }
+  .intro-band__headline {
+    font-size: clamp(1.75rem, 5.5vw, 2.15rem);
+    line-height: 1.25;
   }
   .intro-band__sentence {
     opacity: 1 !important;
@@ -1259,6 +1275,11 @@ p {
     opacity: 1 !important;
     transform: none !important;
     pointer-events: auto !important;
+  }
+  .intro-band__narrative p {
+    font-size: 1.02rem;
+    line-height: 1.65;
+    max-width: 100%;
   }
   .intro-band__backdrop {
     display: none;
@@ -1347,17 +1368,46 @@ p {
 
 @media (max-width: 768px) {
   .human-band {
-    padding: 7rem 0;
+    padding: 4.5rem 0;
   }
 
   .human-band__lead {
-    margin-bottom: 2.5rem;
+    margin-bottom: 2.25rem;
+    font-size: 1.02rem;
+    line-height: 1.6;
   }
 
   .human-band__stat-row {
-    grid-template-columns: 1fr;
-    gap: 2.25rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
     padding-top: 2rem;
+  }
+
+  .human-band__stat strong {
+    font-size: clamp(1.75rem, 5vw, 2.25rem);
+  }
+
+  .human-band__stat span {
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    line-height: 1.35;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .human-band__stat-row {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+
+  .human-band__stat strong {
+    font-size: 1.55rem;
+  }
+
+  .human-band__stat span {
+    font-size: 0.65rem;
+    letter-spacing: 0.02em;
   }
 }
 
@@ -2314,20 +2364,26 @@ p {
   }
 
   .intro-band__grid,
-  .story__grid,
   .ai-difference__grid,
   .pilot__grid,
   .section-heading--split {
     grid-template-columns: 1fr;
   }
 
+  /* Keep Story in 2 columns on Tablet so text & mock sit side-by-side cleanly */
   .story__grid {
+    grid-template-columns: minmax(260px, 0.85fr) minmax(360px, 1.15fr);
     gap: 2rem;
+    align-items: center;
+  }
+
+  .story__indexes {
+    display: none;
   }
 
   .story__visual,
   .mock {
-    min-height: 430px;
+    min-height: 380px;
   }
 
   .module-grid {
@@ -2364,27 +2420,33 @@ p {
   }
 
   .hero {
-    min-height: 92svh;
-    padding: 6.6rem 18px 4.4rem;
-    gap: 1.2rem;
+    min-height: auto;
+    padding: 6rem 18px 3.5rem;
+    gap: 1.5rem;
+    max-width: 100vw;
+    overflow: hidden;
   }
 
   .logo-lockup--nav {
     width: 118px;
-    margin-left: -0.35rem;
+    margin-left: 0;
   }
 
   .logo-lockup--hero {
-    width: min(390px, calc(100vw - 20px));
-    margin: -0.75rem 0 -0.65rem -1rem;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 0 0.5rem 0;
   }
 
   .hero__headline {
-    font-size: 1.85rem;
+    font-size: clamp(1.75rem, 6.5vw, 2.15rem);
+    line-height: 1.2;
+    word-break: break-word;
   }
 
   .hero__subhead {
     font-size: 1.02rem;
+    line-height: 1.55;
   }
 
   .button {
@@ -2392,8 +2454,10 @@ p {
   }
 
   .hero__media {
-    width: 125%;
-    margin: -0.7rem -18% 0;
+    width: 100%;
+    max-width: 100%;
+    margin: 1.25rem 0 0;
+    overflow: hidden;
   }
 
   .hero__media img {
@@ -2410,38 +2474,45 @@ p {
   .ai-difference,
   .clinical-leads,
   .pilot {
-    padding: 5rem 0;
+    padding: 4.5rem 0;
   }
 
-  .story {
-    min-height: 620svh;
+  /* Mobile sequential story presentation */
+  .story--mobile {
+    min-height: auto;
+    padding: 4.5rem 0;
+    background: var(--paper);
   }
 
-  .story__sticky {
-    align-items: start;
-    padding-top: 5.4rem;
+  .story__mobile-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 3.75rem;
   }
 
-  .story__grid {
-    gap: 1rem;
+  .story__mobile-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
   }
 
-  .story__copy p {
-    font-size: 1rem;
+  .story__mobile-card .story__copy h2 {
+    font-size: clamp(1.45rem, 5.5vw, 1.85rem);
+    line-height: 1.25;
   }
 
-  .story__visual,
-  .mock {
-    min-height: 310px;
+  .story__mobile-card .story__copy p {
+    margin-top: 0.75rem;
+    font-size: 0.98rem;
+    line-height: 1.6;
+    color: var(--ink-soft);
   }
 
-  .story__visual {
-    align-self: stretch;
-  }
-
-  .story__rail,
-  .story__indexes {
-    display: none;
+  .story__mobile-card .story__visual {
+    min-height: auto;
+    transform: none !important;
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
   }
 
   .mock {
@@ -2491,11 +2562,6 @@ p {
 
   .human-band__copy {
     padding: 2.5rem 1.5rem;
-  }
-
-  .human-band__stat-row {
-    flex-wrap: wrap;
-    gap: 1.2rem;
   }
 
   .clinical-photo-panel img {

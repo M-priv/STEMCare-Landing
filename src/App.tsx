@@ -772,6 +772,24 @@ function GovernanceAnimation() {
   );
 }
 
+// ─── Responsive Helper Hook ───────────────────────────────────────────────────
+
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth <= breakpoint : false
+  );
+
+  useEffect(() => {
+    const onResize = () => {
+      setIsMobile(window.innerWidth <= breakpoint);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [breakpoint]);
+
+  return isMobile;
+}
+
 // ─── Intro Band ───────────────────────────────────────────────────────────────
 
 function IntroBand() {
@@ -779,6 +797,7 @@ function IntroBand() {
   const shellRef = useRef<HTMLDivElement | null>(null);
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const prefersReduced = useReducedMotion();
+  const isMobile = useIsMobile(960);
   const [centerX, setCenterX] = useState(0);
   const scrollYProgress = useMotionValue(0);
 
@@ -860,13 +879,13 @@ function IntroBand() {
   const rightY = useTransform(scrollYProgress, [0.56, 0.68], [24, 0]);
   const rightPointerEvents = useTransform(scrollYProgress, (p) => (p >= 0.60 ? "auto" : "none"));
 
-  if (prefersReduced) {
+  if (prefersReduced || isMobile) {
     return (
       <section className="intro-band intro-band--static" aria-label="STEMCare thesis">
         <div className="section-shell intro-band__grid">
-          <div>
+          <div className="intro-band__headline-wrap">
             <p className="eyebrow">The thesis</p>
-            <h2>
+            <h2 className="intro-band__headline">
               <span className="intro-band__sentence intro-band__sentence--1">
                 Healthcare does not need more AI theatre.
               </span>
@@ -875,12 +894,14 @@ function IntroBand() {
               </span>
             </h2>
           </div>
-          <p>
-            The pressure in primary care is not only consultation volume. It is the operational drag
-            around care: documents, results, referrals, prescribing, admin queues, patient updates,
-            and unresolved handoffs. STEMCare is designed to help teams move that work safely through
-            a shared clinical operating loop.
-          </p>
+          <div className="intro-band__narrative">
+            <p>
+              The pressure in primary care is not only consultation volume. It is the operational drag
+              around care: documents, results, referrals, prescribing, admin queues, patient updates,
+              and unresolved handoffs. STEMCare is designed to help teams move that work safely through
+              a shared clinical operating loop.
+            </p>
+          </div>
         </div>
       </section>
     );
@@ -997,8 +1018,10 @@ function StorySection() {
   const storyRef = useRef<HTMLElement | null>(null);
   const [active, setActive] = useState(0);
   const scrollYProgress = useMotionValue(0);
+  const isMobile = useIsMobile(768);
 
   useEffect(() => {
+    if (isMobile) return;
     const update = () => {
       if (!storyRef.current) return;
       const rect = storyRef.current.getBoundingClientRect();
@@ -1023,7 +1046,7 @@ function StorySection() {
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
-  }, [scrollYProgress]);
+  }, [scrollYProgress, isMobile]);
 
   const visualY = useTransform(scrollYProgress, [0, 1], [36, -36]);
   const visualRotate = useTransform(scrollYProgress, [0, 1], [-1.4, 1.4]);
@@ -1047,6 +1070,31 @@ function StorySection() {
       <>The model is not the product. <em>Governed clinical work is.</em></>
     ),
   };
+
+  if (isMobile) {
+    return (
+      <section className="story story--mobile" id="platform" aria-labelledby="story-title">
+        <div className="section-shell story__mobile-feed">
+          {storySteps.map((step, index) => {
+            const titleNode = storyTitles[step.title] ?? step.title;
+            return (
+              <div className="story__mobile-card" key={step.eyebrow}>
+                <div className="story__copy">
+                  <p className="eyebrow">{step.eyebrow}</p>
+                  <h2 id={index === 0 ? "story-title" : undefined}>{titleNode}</h2>
+                  <p>{step.body}</p>
+                </div>
+                <div className="story__visual" aria-label="Reactive STEMCare product visual">
+                  <StoryVisual step={step.visual} active={index} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    );
+  }
+
   const titleNode = storyTitles[activeStep.title] ?? activeStep.title;
 
   return (
