@@ -5,18 +5,21 @@
  * Generates natural patient responses for the curated scenarios (Flu,
  * Migraine, Malaria, Serotonin Syndrome).
  *
- * Delta from production: STEMCare generates patient roleplay via the
- * configured runtime model through the ai-gateway; this demo uses the
- * deterministic roleplay reasoner only, so no patient text leaves the
- * browser and no API key is involved.
+ * Mode behavior:
+ * - Deterministic (default): the roleplay reasoner answers from the selected
+ *   symptom pool; nothing leaves the browser.
+ * - Live (VITE_DEMO_LIVE_MODE): roleplay generation runs through the server
+ *   proxy (/api/gemini, role "patient_simulator") with the key held
+ *   server-side. Any failure falls back to the deterministic reasoner.
  */
 
 import type { ConditionName, SimulationConfig } from './harnessTypes';
+import { isLiveMode, requestPatientLine } from './demoApi';
 
 export interface SimulatedPatientResponseResult {
   response: string;
   updatedConfig: SimulationConfig;
-  source: 'fallback_reasoner';
+  source: 'model' | 'fallback_reasoner';
 }
 
 export const CONDITION_SYMPTOMS: Record<ConditionName, string[]> = {
@@ -139,6 +142,22 @@ export async function generatePatientResponse(
   question: string,
   config: SimulationConfig,
 ): Promise<SimulatedPatientResponseResult> {
+  // Live roleplay via the server proxy (only when built in live mode).
+  if (isLiveMode()) {
+    const liveLine = await requestPatientLine({ question, config });
+    if (liveLine && liveLine.trim()) {
+      const cleanText = liveLine.trim().slice(0, 600);
+      return {
+        response: cleanText,
+        updatedConfig: {
+          ...config,
+          previousAnswers: [...config.previousAnswers, cleanText],
+        },
+        source: 'model',
+      };
+    }
+  }
+
   // Deterministic roleplay reasoner: matches question semantics to the
   // selected symptoms. Timeline answers are condition-aware so the roleplay
   // never contradicts the scenario's presenting complaint.

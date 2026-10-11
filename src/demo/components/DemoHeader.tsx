@@ -14,6 +14,7 @@ import {
   PlusCircle,
 } from 'lucide-react';
 import { DEMO_SCENARIOS } from '../lib/scenarios';
+import { isLiveMode } from '../lib/demoApi';
 import type { ScenarioConditionId } from '../types';
 
 interface DemoHeaderProps {
@@ -190,11 +191,18 @@ export const DemoHeader: React.FC<DemoHeaderProps> = ({
 
         {/* Right Section: Demo mode indicator & theme switch */}
         <div className="demo-header__right-group">
-          <div className="demo-header__health-pill" title="This demo runs deterministically in your browser — no data is sent anywhere">
+          <div
+            className="demo-header__health-pill"
+            title={
+              isLiveMode()
+                ? 'Live model responses via server-side proxy — API keys never reach the browser'
+                : 'This demo runs deterministically in your browser — no data is sent anywhere'
+            }
+          >
             <Shield size={13} className="text-emerald-500" />
-            <span>Deterministic demo</span>
+            <span>{isLiveMode() ? 'Live model' : 'Deterministic demo'}</span>
             <span className="demo-header__health-sep">·</span>
-            <span className="demo-header__health-status">Runs in-browser</span>
+            <span className="demo-header__health-status">{isLiveMode() ? 'Server-proxied' : 'Runs in-browser'}</span>
           </div>
 
           <button

@@ -5,16 +5,16 @@
  * Generates probability-ranked differential hypotheses from a pre-consultation
  * report for the clinician review surface.
  *
- * Deltas from production (static demo):
- * - Production generates hypotheses via the server-side harness
- *   (`generateViaMedGemmaHarness`) with ambiguity scoring and escalation
- *   flags; this demo uses curated scenario answers plus a deterministic
- *   keyword reasoner, and makes no model calls.
- * - Probabilities are illustrative constants for ranking and display
- *   buckets — they are NOT calibrated estimates.
- * - Every hypothesis card passes through the ported assistive-only policy
- *   gate (`evaluateAssistiveOnlyGuardrails`, reviewer role) before it can
- *   render, mirroring the production reviewer-output policy.
+ * Mode behavior:
+ * - Deterministic (default): curated scenario answers plus a keyword
+ *   reasoner; no network. Probabilities are illustrative ranking constants,
+ *   NOT calibrated estimates.
+ * - Live (VITE_DEMO_LIVE_MODE): hypothesis generation runs through the
+ *   server proxy (/api/gemini, role "differentials") where the prompt is
+ *   built and every card is gated with the assistive-only policy before it
+ *   may return. Any failure falls back to the deterministic reasoner.
+ * - Every card — from any source — passes `applyAssistiveOnlyGate` before
+ *   rendering.
  */
 
 import type { DifferentialHypothesis } from '../types';
@@ -23,6 +23,7 @@ import {
   evaluateAssistiveOnlyGuardrails,
   buildAssistiveOnlyAbstainNote,
 } from './assistiveOnlyGuardrails';
+import { isLiveMode, requestDifferentials } from './demoApi';
 
 // =============================================================================
 // GATING LOGIC (ported from STEMCare hypothesisService.ts)
@@ -85,6 +86,42 @@ export function isHypothesisGenerationBlocked(reportMarkdown: string): {
 }
 
 // =============================================================================
+// PROMPT CONTRACT (ported from STEMCare hypothesisService.ts — used only by
+// the server-side live engine; kept here so the contract has one home)
+// =============================================================================
+
+export const HYPOTHESIS_SYSTEM_PROMPT = `You are a clinical decision support assistant. Your task is to analyze a pre-consultation report and generate up to 3 differential hypotheses for the clinician to consider.
+
+IMPORTANT RULES:
+1. Generate exactly 1-3 hypotheses, ordered by probability (highest first)
+2. Each hypothesis must be grounded in evidence from the report
+3. Never present as a definitive diagnosis - these are HYPOTHESES for clinical consideration
+4. Include supporting evidence references from the report sections
+5. Assign confidence buckets: high (>70% probability), medium (30-70%), low (<30%)
+
+OUTPUT FORMAT (JSON):
+{
+  "hypotheses": [
+    {
+      "label": "Short diagnosis name",
+      "rationale": "1-3 sentences explaining why this hypothesis fits, grounded in the report",
+      "supporting_evidence_refs": ["Chief Complaint", "HPI: duration", "PMH: relevant condition"],
+      "confidence_bucket": "high|medium|low"
+    }
+  ]
+}`;
+
+export function buildHypothesisPrompt(reportMarkdown: string): string {
+  return `Analyze the following pre-consultation report and generate differential hypotheses:
+
+---
+${reportMarkdown}
+---
+
+Generate up to 3 differential hypotheses with supporting rationale. Return ONLY valid JSON.`;
+}
+
+// =============================================================================
 // GENERATION RESULT INTERFACES
 // =============================================================================
 
@@ -92,7 +129,7 @@ export interface GenerateDifferentialsResult {
   blocked: boolean;
   blockedReason?: string;
   hypotheses: DifferentialHypothesis[];
-  source: 'scenario_benchmark' | 'clinical_reasoner';
+  source: 'gemini_llm' | 'scenario_benchmark' | 'clinical_reasoner';
 }
 
 /**
@@ -126,7 +163,20 @@ export async function generateDifferentialHypotheses(
     }
   }
 
-  // 3. Deterministic Clinical Reasoner (keyword analysis of the report text)
+  // 3. Live generation via the server proxy (only when built in live mode).
+  // The server builds the prompt and gates every card; null → deterministic.
+  if (isLiveMode()) {
+    const liveHypotheses = await requestDifferentials(reportMarkdown);
+    if (liveHypotheses && liveHypotheses.length > 0) {
+      return {
+        blocked: false,
+        hypotheses: applyAssistiveOnlyGate(liveHypotheses),
+        source: 'gemini_llm',
+      };
+    }
+  }
+
+  // 4. Deterministic Clinical Reasoner (keyword analysis of the report text)
   const clinicalResult = executeClinicalReasoningAnalysis(reportMarkdown);
   return {
     blocked: false,

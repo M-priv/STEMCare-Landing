@@ -25,6 +25,7 @@ import {
 } from './lib/patientSimulator';
 import { generateDifferentialHypotheses } from './lib/differentials';
 import { createInitialReport } from './lib/medgemmaEngine';
+import { isLiveMode } from './lib/demoApi';
 import { DemoHeader } from './components/DemoHeader';
 import { DemoChatArea } from './components/DemoChatArea';
 import { DemoChatInput } from './components/DemoChatInput';
@@ -368,14 +369,25 @@ export const MedGemmaDemoPage: React.FC<MedGemmaDemoPageProps> = ({
         : undefined
       : activeScenario?.turns[Math.min(userMessageCount, activeScenario.turns.length - 1)]?.suggestedChips;
 
+  const liveMode = isLiveMode();
+
   return (
     <div className="demo-page" data-theme={theme}>
       <div className="demo-notice-banner" role="note">
-        <span>
-          <strong>Simulation demo</strong> — not medical advice, not connected to a live AI model, and not a real
-          clinical service. Everything runs in your browser: nothing you type is sent anywhere. Please don't enter
-          real personal or health information. In a real emergency, call 999.
-        </span>
+        {liveMode ? (
+          <span>
+            <strong>Interactive demo with a live AI model</strong> — not medical advice and not a real
+            clinical service. Text you type is sent to our server and processed by Google's Gemini to
+            generate responses. Please don't enter real personal or health information. In a real
+            emergency, call 999.
+          </span>
+        ) : (
+          <span>
+            <strong>Simulation demo</strong> — not medical advice, not connected to a live AI model, and not a real
+            clinical service. Everything runs in your browser: nothing you type is sent anywhere. Please don't enter
+            real personal or health information. In a real emergency, call 999.
+          </span>
+        )}
       </div>
 
       <DemoHeader

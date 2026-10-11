@@ -7,16 +7,18 @@
  *    deterministic interview policy (`interviewPrioritization.ts`).
  * 2. Report Writer Persona: compiles the structured intake report each turn.
  *
- * Deltas from the production surface (by design, this is a static demo):
- * - No live model. Production routes both personas through the server-side
- *   ai-gateway edge function so API keys never reach the client; this demo
- *   runs the deterministic interview policy only, so nothing a visitor types
- *   leaves the browser. If a live path is added later it MUST go through a
- *   server proxy and re-enable `validateGeneratedQuestion` +
- *   `evaluateAssistiveOnlyGuardrails` on every generated response.
- * - The production red-flag detector is ported in full (see
- *   `redFlagDetector.ts`), including negation handling and NHS 999/111
- *   routing; detection terminates the interview unconditionally.
+ * Mode behavior:
+ * - Deterministic (default): both personas run on the deterministic engines.
+ *   Nothing a visitor types leaves the browser.
+ * - Live (VITE_DEMO_LIVE_MODE): model calls go through the server proxy
+ *   (`/api/gemini`) — never to the model provider from the browser. The key
+ *   lives only in the server function env. Every live response is gated
+ *   TWICE: server-side in `liveEngine.ts`, then again here with
+ *   `validateGeneratedQuestion` + `evaluateAssistiveOnlyGuardrails` before
+ *   it may enter the transcript. Any failure (network, gate, kill switch,
+ *   rate limit) falls back to the deterministic engine silently.
+ * - The red-flag gate below runs BEFORE anything else in both modes and is
+ *   always deterministic.
  */
 
 import type {
@@ -32,7 +34,10 @@ import {
   shouldTerminateInterview,
   getFallbackQuestion,
   getTopicLabel,
+  validateGeneratedQuestion,
 } from './interviewPrioritization';
+import { evaluateAssistiveOnlyGuardrails } from './assistiveOnlyGuardrails';
+import { isLiveMode, requestInterviewerTurn, requestReportUpdate } from './demoApi';
 import { detectRedFlags } from './redFlagDetector';
 
 // Canonical protocol phrase (kept identical to production for parity; the
@@ -124,8 +129,11 @@ Not yet assessed
 ## Summary
 Interview in progress.`;
 
+/** The prompt builders need only the transcript text, not UI metadata. */
+export type ChatTranscriptMessage = Pick<MedGemmaChatMessage, 'role' | 'content'>;
+
 export function buildInterviewerPrompt(
-  history: MedGemmaChatMessage[],
+  history: ChatTranscriptMessage[],
   presentingComplaint: string,
   patientName?: string,
   currentReport?: string,
@@ -160,7 +168,7 @@ Return exactly ONE question sentence ending with "?". No preamble. No extra comm
 }
 
 export function buildReportWriterPrompt(
-  transcript: MedGemmaChatMessage[],
+  transcript: ChatTranscriptMessage[],
   currentReport: string,
   presentingComplaint: string,
 ): string {
@@ -306,11 +314,42 @@ export async function processPatientMessage(
 
   const shouldEnd = isForceWrapUp || termination.shouldTerminate;
 
-  // 5. Interviewer response — deterministic policy fallback question (the
-  // demo makes no model calls; see header note).
-  const replyText = shouldEnd
-    ? INTERVIEW_COMPLETE_DISPLAY_PHRASE
-    : getFallbackQuestion(selection.selectedTopic);
+  // 5. Interviewer response — live model via server proxy when enabled,
+  // deterministic policy question otherwise (and on ANY live failure).
+  let replyText: string | null = null;
+
+  if (shouldEnd) {
+    replyText = INTERVIEW_COMPLETE_DISPLAY_PHRASE;
+  } else if (isLiveMode()) {
+    const liveText = await requestInterviewerTurn({
+      history: transcriptWithUser,
+      complaint: effectiveComplaint,
+      patientName: state.patientName,
+      currentReport: state.report,
+      control: {
+        questionsAsked: updatedPolicy.questionsAsked,
+        maxQuestions: 15,
+        selectedTopic: selection.selectedTopic,
+        selectedTopicRationale: selection.selectedTopicRationale,
+        blockedTopics: updatedPolicy.blockedTopics,
+      },
+    });
+
+    if (liveText) {
+      // Client-side backstop gate (the server already gated this; enforce
+      // again so the invariant "every assistant question passes policy"
+      // holds regardless of server changes).
+      const validation = validateGeneratedQuestion(liveText);
+      const guardrail = evaluateAssistiveOnlyGuardrails(validation.question);
+      if (validation.valid && guardrail.action === 'allow') {
+        replyText = validation.question;
+      }
+    }
+  }
+
+  if (!replyText) {
+    replyText = getFallbackQuestion(selection.selectedTopic);
+  }
 
   const assistantReply: MedGemmaChatMessage = {
     role: 'assistant',
@@ -319,15 +358,33 @@ export async function processPatientMessage(
   };
   const fullTranscript: MedGemmaChatMessage[] = [...transcriptWithUser, assistantReply];
 
-  // 6. Report Writer Persona — deterministic structured update (no model).
-  // The first finding typically restates the chief complaint verbatim (the
-  // opening answer), so it is dropped from the HPI list to avoid duplication.
-  const findingsList = Object.entries(updatedPolicy.topicFindings || {})
-    .filter(([_, val]) => val.trim() !== effectiveComplaint)
-    .map(([t, val]) => `- **${getTopicLabel(t as InterviewTopic)}**: ${val}`)
-    .join('\n');
+  // 6. Report Writer Persona — live model via server proxy when enabled,
+  // deterministic structured update otherwise (and on ANY live failure).
+  let updatedReportText = state.report;
 
-  const updatedReportText = `## Chief Complaint\n${effectiveComplaint || 'Not yet stated'}\n\n## History of Present Illness\n${findingsList || '- Awaiting symptom details.'}\n\n## Red Flags\nScreened negative for emergency red flags.\n\n## Summary\n${shouldEnd ? 'Interview complete. Report finalized for GP review.' : 'Interview in progress.'}`;
+  if (isLiveMode()) {
+    const liveReport = await requestReportUpdate({
+      transcript: fullTranscript,
+      currentReport: state.report,
+      complaint: effectiveComplaint,
+    });
+    if (liveReport) {
+      const cleaned = cleanReportOutput(liveReport);
+      const guardrail = evaluateAssistiveOnlyGuardrails(cleaned);
+      if (guardrail.action === 'allow') {
+        updatedReportText = cleaned;
+      }
+    }
+  }
+
+  if (updatedReportText === state.report) {
+    const findingsList = Object.entries(updatedPolicy.topicFindings || {})
+      .filter(([_, val]) => val.trim() !== effectiveComplaint)
+      .map(([t, val]) => `- **${getTopicLabel(t as InterviewTopic)}**: ${val}`)
+      .join('\n');
+
+    updatedReportText = `## Chief Complaint\n${effectiveComplaint || 'Not yet stated'}\n\n## History of Present Illness\n${findingsList || '- Awaiting symptom details.'}\n\n## Red Flags\nScreened negative for emergency red flags.\n\n## Summary\n${shouldEnd ? 'Interview complete. Report finalized for GP review.' : 'Interview in progress.'}`;
+  }
 
   return {
     state: {
