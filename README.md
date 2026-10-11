@@ -25,7 +25,7 @@ The project is ready for a static Vite deployment. For Vercel, import the GitHub
 - Build command: `npm run build`
 - Output directory: `dist`
 
-Before launch, update `https://stemcare.health/` in `index.html`, `public/robots.txt`, and `public/sitemap.xml` if the production domain changes.
+Before launch, ensure `https://stemcare.co.uk/` is updated in `index.html`, `public/robots.txt`, and `public/sitemap.xml` if any alternate staging domain is used.
 
 ## Notes
 

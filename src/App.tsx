@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { Suspense, lazy, useEffect, useRef, useState } from "react";
 import {
   Activity,
   ArrowRight,
@@ -29,6 +29,10 @@ import {
   AnimatePresence,
 } from "framer-motion";
 import { submitWaitlistSignup } from "./lib/supabase";
+
+const MedGemmaDemoPage = lazy(() =>
+  import("./demo/MedGemmaDemoPage").then((m) => ({ default: m.MedGemmaDemoPage }))
+);
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -204,6 +208,45 @@ function Reveal({
 
 function App() {
   const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
+  const [currentView, setCurrentView] = useState<"landing" | "demo">(() => {
+    if (typeof window !== "undefined") {
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      if (path === "/demo" || path === "/demo/" || hash === "#demo") {
+        return "demo";
+      }
+    }
+    return "landing";
+  });
+
+  const navigateToDemo = () => {
+    setCurrentView("demo");
+    window.history.pushState(null, "", "/demo");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const navigateToLanding = () => {
+    setCurrentView("landing");
+    window.history.pushState(null, "", "/");
+  };
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      if (path === "/demo" || path === "/demo/" || hash === "#demo") {
+        setCurrentView("demo");
+      } else {
+        setCurrentView("landing");
+      }
+    };
+    window.addEventListener("popstate", handlePopState);
+    window.addEventListener("hashchange", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+      window.removeEventListener("hashchange", handlePopState);
+    };
+  }, []);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -216,7 +259,7 @@ function App() {
 
     const scrollToCurrentHash = () => {
       const targetId = window.location.hash.replace("#", "");
-      if (!targetId) return;
+      if (!targetId || targetId === "demo") return;
       const scrollToTarget = () => {
         document.getElementById(targetId)?.scrollIntoView({ block: "start", behavior: "auto" });
       };
@@ -234,13 +277,45 @@ function App() {
     };
   }, []);
 
+  if (currentView === "demo") {
+    return (
+      <Suspense
+        fallback={
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100vh",
+              width: "100vw",
+              background: "var(--paper)",
+              color: "var(--ink)",
+              fontFamily: "var(--font-body)",
+              fontSize: "0.95rem",
+              fontWeight: 600,
+            }}
+          >
+            Loading MedGemma Pre-Consultation Room...
+          </div>
+        }
+      >
+        <MedGemmaDemoPage
+          onBackToLanding={navigateToLanding}
+          theme={theme}
+          onThemeToggle={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
+        />
+      </Suspense>
+    );
+  }
+
   return (
     <main>
       <Navigation
         theme={theme}
         onThemeToggle={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
+        onOpenDemo={navigateToDemo}
       />
-      <Hero />
+      <Hero onOpenDemo={navigateToDemo} />
       <PrivateClinicMetrics />
       <IntroBand />
       <HumanBand />
@@ -249,7 +324,7 @@ function App() {
       <AiDifference />
       <ClinicalLeadCase />
       <PilotCta />
-      <Footer />
+      <Footer onOpenDemo={navigateToDemo} />
     </main>
   );
 }
@@ -259,9 +334,11 @@ function App() {
 function Navigation({
   theme,
   onThemeToggle,
+  onOpenDemo,
 }: {
   theme: ThemeMode;
   onThemeToggle: () => void;
+  onOpenDemo?: () => void;
 }) {
   const isDark = theme === "dark";
   const navRef = useRef<HTMLElement>(null);
@@ -288,6 +365,16 @@ function Navigation({
           <a href="#difference">Difference</a>
           <a href="#clinical-leads">Clinical leads</a>
           <a href="#pilot">Founding Cohort</a>
+          {onOpenDemo && (
+            <button
+              type="button"
+              className="nav__demo-link"
+              onClick={onOpenDemo}
+              aria-label="Launch MedGemma pre-consultation demo"
+            >
+              Interactive Demo
+            </button>
+          )}
         </div>
         <button
           className="nav__theme"
@@ -485,7 +572,7 @@ function PrivateClinicMetrics() {
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 
-function Hero() {
+function Hero({ onOpenDemo }: { onOpenDemo?: () => void }) {
   const prefersReduced = useReducedMotion();
   const { scrollY } = useScroll();
   const mediaY = useTransform(scrollY, [0, 900], [0, -70]);
@@ -535,9 +622,19 @@ function Hero() {
           aria-label="Primary actions"
           variants={prefersReduced ? undefined : heroItemVariant}
         >
-          <a className="button button--primary" href="#pilot">
-            Book 15-Min Demo <ArrowRight size={16} aria-hidden="true" />
-          </a>
+          {onOpenDemo ? (
+            <button
+              type="button"
+              className="button button--primary"
+              onClick={onOpenDemo}
+            >
+              Try MedGemma Demo <ArrowRight size={16} aria-hidden="true" />
+            </button>
+          ) : (
+            <a className="button button--primary" href="#pilot">
+              Book 15-Min Demo <ArrowRight size={16} aria-hidden="true" />
+            </a>
+          )}
           <a className="hero__link-secondary" href="#videoshowcase">
             Watch live platform demo <ArrowRight size={14} aria-hidden="true" />
           </a>
@@ -1636,7 +1733,7 @@ function PilotCta() {
 
 // ─── Footer ───────────────────────────────────────────────────────────────────
 
-function Footer() {
+function Footer({ onOpenDemo }: { onOpenDemo?: () => void }) {
   return (
     <footer className="footer">
       <div className="section-shell footer__inner">
@@ -1648,6 +1745,11 @@ function Footer() {
           <a href="#platform">Platform</a>
           <a href="#difference">Difference</a>
           <a href="#pilot">Pilot</a>
+          {onOpenDemo && (
+            <button type="button" className="footer__demo-link" onClick={onOpenDemo}>
+              MedGemma Demo
+            </button>
+          )}
           <a href="mailto:madesiyan@stemcare.co.uk?subject=STEMCare%20clinical%20lead%20briefing">Contact</a>
         </div>
       </div>
