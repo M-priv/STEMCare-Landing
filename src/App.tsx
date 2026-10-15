@@ -995,7 +995,7 @@ function IntroBand() {
                 Healthcare does not need more AI theatre.
               </span>
               <span className="intro-band__sentence intro-band__sentence--2">
-                It needs governed follow-through.
+                <em>It needs governed follow-through.</em>
               </span>
             </h2>
           </div>
@@ -1049,7 +1049,7 @@ function IntroBand() {
                 className="intro-band__sentence intro-band__sentence--2"
                 style={{ opacity: s2Opacity, y: s2Y }}
               >
-                It needs governed follow-through.
+                <em>It needs governed follow-through.</em>
               </motion.span>
             </h2>
           </motion.div>
@@ -1085,7 +1085,7 @@ function HumanBand() {
           <Reveal>
             <p className="eyebrow">Clinicians first</p>
             <h2 id="human-band-title">
-              The people don’t change. What drags them down does.
+              The people don’t change. <em>What drags them down does.</em>
             </h2>
           </Reveal>
           <Reveal delay={0.1}>
