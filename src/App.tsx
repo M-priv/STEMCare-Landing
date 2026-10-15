@@ -395,8 +395,16 @@ function Navigation({
 function LogoLockup({ variant }: { variant: "nav" | "hero" }) {
   return (
     <span className={`logo-lockup logo-lockup--${variant}`} aria-hidden="true">
-      <img className="logo-lockup__image logo-lockup__image--light" src="/stemcare-logo.png" alt="STEMCare" />
-      <img className="logo-lockup__image logo-lockup__image--dark" src="/stemcare-logo-on-dark.png" alt="STEMCare" />
+      <img
+        className="logo-lockup__image logo-lockup__image--light"
+        src="/stemcare-logo-botanical-light.png"
+        alt="STEMCare"
+      />
+      <img
+        className="logo-lockup__image logo-lockup__image--dark"
+        src="/stemcare-logo-botanical-dark.png"
+        alt="STEMCare"
+      />
     </span>
   );
 }
