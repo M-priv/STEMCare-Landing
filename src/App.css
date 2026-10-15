@@ -1349,9 +1349,9 @@ p {
 
 .human-band__stat strong {
   font-family: var(--font-display);
-  font-style: italic;
+  font-style: normal;
   font-size: clamp(2.5rem, 3.6vw, 3.25rem);
-  font-weight: 400;
+  font-weight: 600;
   color: var(--teal);
   line-height: 1;
   letter-spacing: -0.02em;
@@ -1502,20 +1502,26 @@ p {
   position: absolute;
   right: max(20px, calc((100% - 1180px) / 2 - 52px));
   bottom: 8%;
-  display: grid;
-  gap: 0.5rem;
-  color: var(--ink-muted);
-  font-size: 0.78rem;
-  font-weight: 760;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  align-items: center;
 }
 
-.story__indexes span {
+.story__index-dot {
+  display: block;
+  width: 5px;
+  height: 20px;
+  border-radius: 9999px;
+  background: var(--line-strong);
   opacity: 0.35;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.story__indexes .is-active {
-  color: var(--blue);
+.story__index-dot.is-active {
+  background: var(--brand-cyan, #2d6a4f);
   opacity: 1;
+  height: 36px;
 }
 
 .story__scroll-space {
@@ -1922,9 +1928,12 @@ p {
 }
 
 .accordion-divider-vs {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 1.25rem;
+  font-family: var(--font-body);
+  font-style: normal;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--ink-muted);
   text-align: center;
 }

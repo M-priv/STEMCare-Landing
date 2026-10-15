@@ -61,35 +61,35 @@ function getInitialTheme(): ThemeMode {
 
 const storySteps: StoryStep[] = [
   {
-    eyebrow: "01 / What STEMCare is",
+    eyebrow: "The Operating Layer",
     title: "A clinical operating layer for practice workflows.",
     body:
       "STEMCare turns patient interactions, practice policy, and clinician intent into evidence-backed drafts, actions, and shared workflow state. The clinician remains the decision maker; the system handles coordination in the background.",
     visual: "intent",
   },
   {
-    eyebrow: "02 / What it changes",
+    eyebrow: "Workflow Automation",
     title: "Routine work moves in the background. Judgment stays visible.",
     body:
       "Expected paths such as document triage, referral chase, prescription admin, aftercare monitoring, and queue hygiene can progress through policy-clear automation. Ambiguous or higher-risk work is surfaced as a plain-language plan for clinician review.",
     visual: "spine",
   },
   {
-    eyebrow: "03 / Why trust is built in",
+    eyebrow: "Clinical Governance",
     title: "Resident proposes. Guardian gates. Mentor learns offline.",
     body:
       "STEMCare separates generation from permission. AI can draft, classify, retrieve, and propose. Deterministic Guardian controls block unsafe actions, require evidence receipts, and escalate clinical judgment before anything material happens.",
     visual: "governance",
   },
   {
-    eyebrow: "04 / Why the market feels wrong",
+    eyebrow: "The Full Care Loop",
     title: "Most healthcare AI is sold as a feature. Care needs an operating loop.",
     body:
       "Ambient notes, generic copilots, and triage widgets can help locally, but they often leave the follow-through untouched. STEMCare is designed around the full loop: intake, evidence, plan, action, review, patient update, and learning.",
     visual: "market",
   },
   {
-    eyebrow: "05 / How AI is used differently",
+    eyebrow: "Supervised AI Architecture",
     title: "Governed clinical execution is the core platform.",
     body:
       "AI operates as a supervised component within a clinical governance system: context is constrained, outputs are verified, permissions are explicit, and learning happens from reviewed outcomes rather than live experimentation.",
@@ -431,7 +431,7 @@ const heroMediaVariant = {
 const CLINIC_VIDEOS = [
   {
     id: "triage",
-    tabLabel: "01 / Intake & Triage",
+    tabLabel: "Intake & Triage",
     title: "E-Consult Intake & Red-Flag Triage",
     metric: "Saves ~15m / consult",
     desc: "Unstructured patient complaints and medical history are synthesised into structured clinical briefings before the appointment begins.",
@@ -440,7 +440,7 @@ const CLINIC_VIDEOS = [
   },
   {
     id: "medgemma",
-    tabLabel: "02 / Consultation Synthesis",
+    tabLabel: "Consultation Synthesis",
     title: "Clinical Consultation & SOAP Synthesis",
     metric: "100% Doctor-in-the-loop",
     desc: "Drafts comprehensive SOAP notes, differential considerations, and guideline-referenced management plans with one-click verification.",
@@ -449,7 +449,7 @@ const CLINIC_VIDEOS = [
   },
   {
     id: "referral",
-    tabLabel: "03 / Referral Loops",
+    tabLabel: "Referral Loops",
     title: "Referral Architect & Specialist Letters",
     metric: "Drafted in < 60s",
     desc: "Drafts outbound specialist referral letters and automates follow-up tracking, ensuring high-value cases never stall.",
@@ -995,7 +995,7 @@ function IntroBand() {
                 Healthcare does not need more AI theatre.
               </span>
               <span className="intro-band__sentence intro-band__sentence--2">
-                <em>It needs governed follow-through.</em>
+                It needs governed follow-through.
               </span>
             </h2>
           </div>
@@ -1049,7 +1049,7 @@ function IntroBand() {
                 className="intro-band__sentence intro-band__sentence--2"
                 style={{ opacity: s2Opacity, y: s2Y }}
               >
-                <em>It needs governed follow-through.</em>
+                It needs governed follow-through.
               </motion.span>
             </h2>
           </motion.div>
@@ -1085,7 +1085,7 @@ function HumanBand() {
           <Reveal>
             <p className="eyebrow">Clinicians first</p>
             <h2 id="human-band-title">
-              The people don’t change. <em>What drags them down does.</em>
+              The people don’t change. What drags them down does.
             </h2>
           </Reveal>
           <Reveal delay={0.1}>
@@ -1157,36 +1157,17 @@ function StorySection() {
   const visualRotate = useTransform(scrollYProgress, [0, 1], [-1.4, 1.4]);
 
   const activeStep = storySteps[active];
-  // Update story step titles with em emphasis
-  const storyTitles: Record<string, React.ReactNode> = {
-    "A clinical operating layer for practice workflows.": (
-      <>A clinical operating layer <em>for practice workflows.</em></>
-    ),
-    "Routine work moves in the background. Judgment stays visible.": (
-      <>Routine work moves in the background. <em>Judgment stays visible.</em></>
-    ),
-    "Resident proposes. Guardian gates. Mentor learns offline.": (
-      <>Resident proposes. Guardian gates. <em>Mentor learns offline.</em></>
-    ),
-    "Most healthcare AI is sold as a feature. Care needs an operating loop.": (
-      <>Most healthcare AI is sold as a feature. <em>Care needs an operating loop.</em></>
-    ),
-    "Governed clinical execution is the core platform.": (
-      <>Governed clinical execution <em>is the core platform.</em></>
-    ),
-  };
 
   if (isMobile) {
     return (
       <section className="story story--mobile" id="platform" aria-labelledby="story-title">
         <div className="section-shell story__mobile-feed">
           {storySteps.map((step, index) => {
-            const titleNode = storyTitles[step.title] ?? step.title;
             return (
               <div className="story__mobile-card" key={step.eyebrow}>
                 <div className="story__copy">
                   <p className="eyebrow">{step.eyebrow}</p>
-                  <h2 id={index === 0 ? "story-title" : undefined}>{titleNode}</h2>
+                  <h2 id={index === 0 ? "story-title" : undefined}>{step.title}</h2>
                   <p>{step.body}</p>
                 </div>
                 <div className="story__visual" aria-label="Reactive STEMCare product visual">
@@ -1199,8 +1180,6 @@ function StorySection() {
       </section>
     );
   }
-
-  const titleNode = storyTitles[activeStep.title] ?? activeStep.title;
 
   return (
     <section className="story" id="platform" ref={storyRef} aria-labelledby="story-title">
@@ -1217,7 +1196,7 @@ function StorySection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, ease: "easeOut" }}
             >
-              <h2 id="story-title">{titleNode}</h2>
+              <h2 id="story-title">{activeStep.title}</h2>
               <p>{activeStep.body}</p>
             </motion.div>
           </div>
@@ -1231,9 +1210,10 @@ function StorySection() {
         </div>
         <div className="story__indexes" aria-hidden="true">
           {storySteps.map((step, index) => (
-            <span key={step.eyebrow} className={index === active ? "is-active" : ""}>
-              {String(index + 1).padStart(2, "0")}
-            </span>
+            <span
+              key={step.eyebrow}
+              className={`story__index-dot ${index === active ? "is-active" : ""}`}
+            />
           ))}
         </div>
       </div>
@@ -1286,7 +1266,7 @@ function WorkflowSpine() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, ease: EASE_OUT_EXPO, delay: index * 0.07 }}
         >
-          <span>{String(index + 1).padStart(2, "0")}</span>
+          <span>{index + 1}</span>
           <strong>{item}</strong>
           <small>{index < 3 ? "Shared state updated" : "Clinician visible"}</small>
         </motion.div>
@@ -1384,7 +1364,7 @@ function MarketContrast() {
         <Reveal>
           <div className="section-heading">
             <p className="eyebrow">Different by design</p>
-            <h2 id="market-title">What clinical teams are usually sold <em>versus what STEMCare is building.</em></h2>
+            <h2 id="market-title">What clinical teams are usually sold versus what STEMCare is building.</h2>
           </div>
         </Reveal>
         
@@ -1467,7 +1447,7 @@ function AiDifference() {
       <div className="section-shell ai-difference__grid">
         <Reveal className="ai-difference__copy">
           <p className="eyebrow">How AI is used</p>
-          <h2 id="ai-title">A supervised clinical workforce, <em>governed at every step.</em></h2>
+          <h2 id="ai-title">A supervised clinical workforce, governed at every step.</h2>
           <p>
             STEMCare treats models as one part of a governed operating system. The AI is useful
             because it has the right context, narrow permissions, visible receipts, and a clear
@@ -1518,7 +1498,7 @@ function ClinicalLeadCase() {
           <div className="section-heading section-heading--split">
             <div>
               <p className="eyebrow">For clinicians and clinical leads</p>
-              <h2 id="lead-title">Why this can change <em>the way a practice operates.</em></h2>
+              <h2 id="lead-title">Why this can change the way a practice operates.</h2>
             </div>
             <p>
               Clinical skill should never be buried under unmanaged handoffs, administrative drag, and disconnected tools.
@@ -1709,7 +1689,7 @@ function PilotCta() {
         <Reveal>
           <div>
             <p className="eyebrow">Clinical Practice Pilot Cohort</p>
-            <h2 id="pilot-title">Bring STEMCare into your clinic <em>with dedicated clinical onboarding.</em></h2>
+            <h2 id="pilot-title">Bring STEMCare into your clinic with dedicated clinical onboarding.</h2>
             <p>
               We are onboarding our founding cohort of private clinics, outpatient practices, and clinical teams.
               Partner practices receive customised specialist templates, tailored intake configuration,
