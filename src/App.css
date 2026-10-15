@@ -1,9 +1,9 @@
-@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
 
 :root {
   color-scheme: light;
-  --font-body: "Geist", "Plus Jakarta Sans", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-display: "Newsreader", "Fraunces", "Instrument Serif", Georgia, serif;
+  --font-body: "Plus Jakarta Sans", "Geist", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Geist", "Plus Jakarta Sans", "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif;
   --paper: #fafaf8;
   --paper-strong: #ffffff;
   --surface: rgba(255, 255, 255, 0.76);
@@ -186,13 +186,14 @@ h2 {
   color: var(--ink);
   font-family: var(--font-display);
   font-style: normal;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.025em;
+  font-weight: 600;
 }
 
 h2 em {
   font-style: italic;
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 400;
 }
 
 h3 {
@@ -530,12 +531,12 @@ p {
 
 .hero__headline {
   font-family: var(--font-display);
-  font-size: clamp(2.1rem, 3.8vw, 2.75rem);
+  font-size: clamp(2.2rem, 4vw, 2.85rem);
   line-height: 1.15;
-  font-weight: 400;
+  font-weight: 600;
   color: var(--ink);
   margin-top: 1.25rem;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.03em;
 }
 
 .hero__subhead {

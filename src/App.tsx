@@ -58,9 +58,9 @@ function getInitialTheme(): ThemeMode {
 const storySteps: StoryStep[] = [
   {
     eyebrow: "01 / What STEMCare is",
-    title: "A clinical operating layer, not another chatbot.",
+    title: "A clinical operating layer for practice workflows.",
     body:
-      "STEMCare turns patient interactions, practice policy, and clinician intent into evidence-backed drafts, actions, and shared workflow state. The clinician remains the decision maker; the system does the coordination work around them.",
+      "STEMCare turns patient interactions, practice policy, and clinician intent into evidence-backed drafts, actions, and shared workflow state. The clinician remains the decision maker; the system handles coordination in the background.",
     visual: "intent",
   },
   {
@@ -86,9 +86,9 @@ const storySteps: StoryStep[] = [
   },
   {
     eyebrow: "05 / How AI is used differently",
-    title: "The model is not the product. Governed clinical work is.",
+    title: "Governed clinical execution is the core platform.",
     body:
-      "AI is treated as a supervised worker inside a clinical governance system: context is constrained, outputs are checked, permissions are explicit, and learning happens from reviewed outcomes rather than uncontrolled live experimentation.",
+      "AI operates as a supervised component within a clinical governance system: context is constrained, outputs are verified, permissions are explicit, and learning happens from reviewed outcomes rather than live experimentation.",
     visual: "learning",
   },
 ];
@@ -101,17 +101,17 @@ const marketRows = [
     typicalProblem: "Forces clinicians into the role of prompt-engineers. You still have to manually assemble context and copy-paste between systems.",
     stemcareShort: "A case-first operating surface that resolves context and proposes plans.",
     stemcareTitle: "STEMCare (The Operating Loop)",
-    stemcareSolution: "Pre-assembled clinical context. STEMCare ingests the patient history, task details, and local guidelines to present a structured, ready-to-review clinical plan.",
+    stemcareSolution: "Pre-assembled clinical context. STEMCare collates patient history, task details, and local guidelines to present a structured, ready-to-review clinical plan.",
     icon: Sparkles
   },
   {
     id: "documentation-vs-action",
     typicalShort: "An ambient note tool that ends at documentation.",
     typicalTitle: "Typical AI (Scribble/Note)",
-    typicalProblem: "Ends at documentation. It might draft a flawless consultation note, but leaves the referrals, investigations, and patient follow-ups for you to execute manually.",
+    typicalProblem: "Ends at documentation. It might draft a consultation note, but leaves the referrals, investigations, and patient follow-ups for you to execute manually.",
     stemcareShort: "A follow-through loop that connects note context directly to workflows.",
     stemcareTitle: "STEMCare (Action-Oriented)",
-    stemcareSolution: "Complete workflow follow-through. It turns consultation context directly into action—drafting referrals, checking guidelines, and preparing patient communications.",
+    stemcareSolution: "Complete workflow follow-through. It turns consultation context directly into action, drafting referrals, checking guidelines, and preparing patient communications.",
     icon: Workflow
   },
   {
@@ -347,7 +347,7 @@ const CLINIC_VIDEOS = [
     tabLabel: "01 / Intake & Triage",
     title: "E-Consult Intake & Red-Flag Triage",
     metric: "Saves ~15m / consult",
-    desc: "Unstructured patient complaints and medical history are synthesized into structured clinical briefings before the appointment begins.",
+    desc: "Unstructured patient complaints and medical history are synthesised into structured clinical briefings before the appointment begins.",
     src: "/videos/stemcare-triage-demo.mp4",
     poster: "/videos/stemcare-triage-poster.jpg",
   },
@@ -536,7 +536,7 @@ function Hero() {
           className="hero__subhead"
           variants={prefersReduced ? undefined : heroItemVariant}
         >
-          STEMCare synthesizes patient intake, drafts structured consultation notes, and tracks specialist referrals in 60 seconds—with deterministic clinical safety.
+          STEMCare synthesises patient intake, drafts structured consultation notes, and tracks specialist referrals in under 60 seconds, backed by deterministic clinical safety.
         </motion.p>
         <motion.div
           className="hero__actions"
@@ -665,7 +665,7 @@ function GovernanceAnimation() {
     <div
       className="gov-animation"
       role="img"
-      aria-label="Animated diagram: Resident proposes, Guardian checks, Mentor learns — STEMCare governance loop"
+      aria-label="Animated diagram: Resident proposes, Guardian checks, Mentor learns: STEMCare governance loop"
     >
       {/* Resident node */}
       <motion.div
@@ -716,7 +716,7 @@ function GovernanceAnimation() {
         >
           {guardianActive
             ? phase === "complete"
-              ? "Approved — evidence receipt logged."
+              ? "Approved: evidence receipt logged."
               : "Checking policy, scope, and risk…"
             : "Waiting for proposal"}
         </motion.p>
@@ -993,9 +993,9 @@ function HumanBand() {
           </Reveal>
           <Reveal delay={0.1}>
             <p className="human-band__lead">
-              STEMCare is not a replacement for clinical judgment. It is infrastructure that removes
-              the invisible operational weight around it — so that GPs, nurses, and practice managers
-              can do what they trained to do, with the time and clarity to do it well.
+              STEMCare provides clinical operational infrastructure that removes administrative
+              friction, allowing GPs, nurses, and practice managers to focus on patient care
+              with the time and clarity to do it well.
             </p>
           </Reveal>
           <Reveal delay={0.18}>
@@ -1062,8 +1062,8 @@ function StorySection() {
   const activeStep = storySteps[active];
   // Update story step titles with em emphasis
   const storyTitles: Record<string, React.ReactNode> = {
-    "A clinical operating layer, not another chatbot.": (
-      <>A clinical operating layer, <em>not another chatbot.</em></>
+    "A clinical operating layer for practice workflows.": (
+      <>A clinical operating layer <em>for practice workflows.</em></>
     ),
     "Routine work moves in the background. Judgment stays visible.": (
       <>Routine work moves in the background. <em>Judgment stays visible.</em></>
@@ -1074,8 +1074,8 @@ function StorySection() {
     "Most healthcare AI is sold as a feature. Care needs an operating loop.": (
       <>Most healthcare AI is sold as a feature. <em>Care needs an operating loop.</em></>
     ),
-    "The model is not the product. Governed clinical work is.": (
-      <>The model is not the product. <em>Governed clinical work is.</em></>
+    "Governed clinical execution is the core platform.": (
+      <>Governed clinical execution <em>is the core platform.</em></>
     ),
   };
 
@@ -1370,7 +1370,7 @@ function AiDifference() {
       <div className="section-shell ai-difference__grid">
         <Reveal className="ai-difference__copy">
           <p className="eyebrow">How AI is used</p>
-          <h2 id="ai-title">Not black-box automation. <em>A supervised clinical workforce.</em></h2>
+          <h2 id="ai-title">A supervised clinical workforce, <em>governed at every step.</em></h2>
           <p>
             STEMCare treats models as one part of a governed operating system. The AI is useful
             because it has the right context, narrow permissions, visible receipts, and a clear
@@ -1424,8 +1424,7 @@ function ClinicalLeadCase() {
               <h2 id="lead-title">Why this can change <em>the way a practice operates.</em></h2>
             </div>
             <p>
-              The promise is not that AI replaces clinical skill. The promise is that clinical skill
-              is no longer buried under unmanaged handoffs, admin drag, and disconnected tools.
+              Clinical skill should never be buried under unmanaged handoffs, administrative drag, and disconnected tools.
             </p>
           </div>
         </Reveal>
@@ -1503,7 +1502,7 @@ function WaitlistCard() {
     <div className="waitlist-card" aria-label="Clinical Practice Pilot Application Form">
       <h3>Request Pilot Access</h3>
       <p className="waitlist-card__subtitle">
-        Turnkey setup, custom clinical templates, and dedicated engineering SLA for partner clinics and practices.
+        Structured setup, bespoke clinical templates, and dedicated engineering support for partner clinics and practices.
       </p>
 
       <form className="waitlist-form" onSubmit={handleSubmit}>
@@ -1561,7 +1560,7 @@ function WaitlistCard() {
             >
               <option value="Solo Specialist / Single Doctor">Solo Specialist / Single Doctor</option>
               <option value="2–5 Clinicians (Boutique Clinic)">2–5 Clinicians (Boutique Clinic)</option>
-              <option value="6–15 Clinicians (Multi-Specialty Clinic)">6–15 Clinicians (Multi-Specialty Clinic)</option>
+              <option value="6–15 Clinicians (Multi-Speciality Clinic)">6–15 Clinicians (Multi-Speciality Clinic)</option>
               <option value="Multi-Site / Healthcare Group">Multi-Site / Healthcare Group</option>
               <option value="NHS Practice / PCN">NHS Practice / PCN</option>
             </select>
@@ -1597,7 +1596,7 @@ function WaitlistCard() {
 
         <div className="waitlist-social-proof">
           <ShieldCheck size={14} style={{ color: "var(--warm, #e0a96d)" }} />
-          <span>UK GDPR &amp; NHS DSP Toolkit Compliant • Zero data sold or shared</span>
+          <span>UK GDPR &amp; NHS DSP Toolkit Compliant, with zero patient data sold or shared</span>
         </div>
       </form>
     </div>
@@ -1613,17 +1612,17 @@ function PilotCta() {
         <Reveal>
           <div>
             <p className="eyebrow">Clinical Practice Pilot Cohort</p>
-            <h2 id="pilot-title">Bring STEMCare into your clinic <em>with dedicated white-glove onboarding.</em></h2>
+            <h2 id="pilot-title">Bring STEMCare into your clinic <em>with dedicated clinical onboarding.</em></h2>
             <p>
               We are onboarding our founding cohort of private clinics, outpatient practices, and clinical teams.
-              Partner practices receive customized specialist templates, turnkey intake configuration,
+              Partner practices receive customised specialist templates, tailored intake configuration,
               and a direct clinical engineering SLA.
             </p>
 
             <div className="pilot__actions">
               <a
                 className="button button--ghost"
-                href="mailto:madesiyan@stemcare.co.uk?subject=STEMCare%20Practice%20Inquiry"
+                href="mailto:madesiyan@stemcare.co.uk?subject=STEMCare%20Practice%20Enquiry"
               >
                 Contact Us
               </a>
