@@ -2035,90 +2035,6 @@ p {
   color: var(--ink);
 }
 
-/* ─── AI Difference ───────────────────────────────── */
-
-.ai-difference {
-  position: relative;
-  color: var(--ink);
-  background: var(--ai-background);
-  background-size: 68px 68px;
-  padding: 15rem 0 16rem;
-}
-
-.ai-difference::before,
-.ai-difference::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 8rem;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.ai-difference::before {
-  top: 0;
-  background: linear-gradient(to bottom, var(--paper), transparent);
-}
-
-.ai-difference::after {
-  bottom: 0;
-  background: linear-gradient(to top, var(--paper), transparent);
-}
-
-.ai-difference__grid {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: minmax(320px, 0.8fr) minmax(420px, 1fr);
-  gap: 5.5rem;
-  align-items: start;
-}
-
-.ai-difference h2,
-.ai-difference h3 {
-  color: var(--ink);
-}
-
-.ai-difference p {
-  color: var(--ink-soft);
-}
-
-.ai-difference__copy p:last-child {
-  margin-top: 1.5rem;
-  font-size: 1.08rem;
-  line-height: 1.7;
-}
-
-.principle-grid {
-  display: grid;
-  gap: 1.75rem;
-}
-
-.principle-card {
-  border-top: 1px solid var(--line);
-  padding: 1.6rem 0;
-  background: transparent;
-  transition: transform 280ms var(--ease-out-expo), box-shadow 280ms ease;
-}
-
-.principle-card:hover {
-  transform: translateY(-3px);
-}
-
-.principle-card svg {
-  color: var(--warm);
-}
-
-.principle-card h3 {
-  margin-top: 1rem;
-  color: var(--ink);
-}
-
-.principle-card p {
-  margin-top: 0.65rem;
-  color: var(--ink-soft);
-}
 
 /* ─── Clinical Leads ──────────────────────────────── */
 
@@ -2179,30 +2095,15 @@ p {
 }
 
 .leadership-panel {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2.25rem;
   margin-top: 5rem;
   border-top: 1px solid var(--line);
-  padding-top: 3rem;
-  align-items: start;
-}
-
-.leadership-panel h3 {
-  grid-column: 1;
-  font-size: 1rem;
-  font-weight: 650;
-  color: var(--ink);
-  margin: 0;
-  line-height: 1.4;
-  letter-spacing: -0.01em;
+  padding-top: 3.5rem;
 }
 
 .leadership-panel__items {
-  grid-column: 2 / -1;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.75rem 2.25rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem 2.25rem;
 }
 
 .leadership-panel__items p {
@@ -2374,7 +2275,6 @@ p {
   }
 
   .intro-band__grid,
-  .ai-difference__grid,
   .pilot__grid,
   .section-heading--split {
     grid-template-columns: 1fr;
@@ -2400,17 +2300,8 @@ p {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .leadership-panel {
-    grid-template-columns: 1fr;
-  }
-
-  .leadership-panel h3 {
-    grid-column: 1;
-    margin-bottom: 1.25rem;
-  }
-
   .leadership-panel__items {
-    grid-column: 1;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -2481,7 +2372,6 @@ p {
 
   .intro-band,
   .market,
-  .ai-difference,
   .clinical-leads,
   .pilot {
     padding: 4.5rem 0;
