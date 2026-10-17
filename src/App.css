@@ -519,10 +519,6 @@ p {
   padding-bottom: 0.8rem;
 }
 
-.hero__eyebrow {
-  color: var(--teal);
-}
-
 .hero h1 {
   display: block;
   max-width: 650px;
