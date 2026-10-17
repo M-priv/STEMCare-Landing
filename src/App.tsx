@@ -7,7 +7,6 @@ import {
   ChevronDown,
   ClipboardCheck,
   Database,
-  Eye,
   LockKeyhole,
   MessageSquare,
   Moon,
@@ -67,7 +66,7 @@ const storySteps: StoryStep[] = [
     eyebrow: "Workflow Automation",
     title: "Routine work moves in the background. Judgment stays visible.",
     body:
-      "Expected paths such as document triage, referral chase, prescription admin, aftercare monitoring, and queue hygiene can progress through policy-clear automation. Ambiguous or higher-risk work is surfaced as a plain-language plan for clinician review.",
+      "Expected paths such as document triage, referral chase, prescription admin, follow-up monitoring, and queue hygiene can progress through policy-clear automation. Ambiguous or higher-risk work is surfaced as a plain-language plan for clinician review.",
     visual: "spine",
   },
   {
@@ -157,7 +156,7 @@ const modules = [
   },
   {
     icon: Route,
-    title: "Referral and aftercare loops",
+    title: "Referral and follow-up loops",
     body:
       "Designed to track handoffs beyond the draft: chase, acknowledgement, booking, patient updates, escalation, and closure.",
   },
@@ -246,7 +245,6 @@ function App() {
       <HumanBand />
       <StorySection />
       <MarketContrast />
-      <AiDifference />
       <ClinicalLeadCase />
       <PilotCta />
       <Footer />
@@ -854,10 +852,6 @@ function IntroBand() {
   // Background fade into focus, then softly dissolve before unpinning to avoid harsh edges
   const bgOpacity = useTransform(scrollYProgress, [0, 0.12, 0.84, 0.98], [0, 1, 1, 0]);
 
-  // Eyebrow reveal
-  const eyebrowOpacity = useTransform(scrollYProgress, [0.06, 0.16], [0, 1]);
-  const eyebrowY = useTransform(scrollYProgress, [0.06, 0.16], [16, 0]);
-
   // Sentence 1: "Healthcare does not need more AI theatre."
   const s1Opacity = useTransform(scrollYProgress, [0.08, 0.20], [0, 1]);
   const s1Y = useTransform(scrollYProgress, [0.08, 0.20], [20, 0]);
@@ -889,10 +883,9 @@ function IntroBand() {
 
   if (prefersReduced || isMobile) {
     return (
-      <section className="intro-band intro-band--static" aria-label="STEMCare thesis">
+      <section className="intro-band intro-band--static" aria-label="Governed clinical operations">
         <div className="section-shell intro-band__grid">
           <div className="intro-band__headline-wrap">
-            <p className="eyebrow">The thesis</p>
             <h2 className="intro-band__headline">
               <span className="intro-band__sentence intro-band__sentence--1">
                 Healthcare does not need more AI theatre.
@@ -916,7 +909,7 @@ function IntroBand() {
   }
 
   return (
-    <section className="intro-band intro-band--cinematic" ref={introRef} aria-label="STEMCare thesis">
+    <section className="intro-band intro-band--cinematic" ref={introRef} aria-label="Governed clinical operations">
       <div className="intro-band__sticky">
         {/* Immersive background transition */}
         <motion.div
@@ -935,12 +928,6 @@ function IntroBand() {
               transformOrigin: "center left",
             }}
           >
-            <motion.p
-              className="eyebrow"
-              style={{ opacity: eyebrowOpacity, y: eyebrowY }}
-            >
-              The thesis
-            </motion.p>
             <h2 className="intro-band__headline">
               <motion.span
                 className="intro-band__sentence intro-band__sentence--1"
@@ -986,7 +973,6 @@ function HumanBand() {
       <div className="section-shell">
         <div className="human-band__content">
           <Reveal>
-            <p className="eyebrow">Clinicians first</p>
             <h2 id="human-band-title">
               The people don’t change. <em>What drags them down does.</em>
             </h2>
@@ -1266,7 +1252,6 @@ function MarketContrast() {
       <div className="section-shell">
         <Reveal>
           <div className="section-heading">
-            <p className="eyebrow">Different by design</p>
             <h2 id="market-title">What clinical teams are usually sold versus what STEMCare is building.</h2>
           </div>
         </Reveal>
@@ -1342,55 +1327,6 @@ function MarketContrast() {
   );
 }
 
-// ─── AI Difference ────────────────────────────────────────────────────────────
-
-function AiDifference() {
-  return (
-    <section className="ai-difference" aria-labelledby="ai-title">
-      <div className="section-shell ai-difference__grid">
-        <Reveal className="ai-difference__copy">
-          <p className="eyebrow">How AI is used</p>
-          <h2 id="ai-title">A supervised clinical workforce, governed at every step.</h2>
-          <p>
-            STEMCare treats models as one part of a governed operating system. The AI is useful
-            because it has the right context, narrow permissions, visible receipts, and a clear
-            place to stop.
-          </p>
-        </Reveal>
-        <div className="principle-grid">
-          {[
-            { icon: Eye, title: "Visible reasoning surface", body: "Clinicians see the plan, sources, assumptions, blocked actions, and approval requests." },
-            { icon: ShieldCheck, title: "Deterministic safety layer", body: "Guardian rules can veto, require evidence, or escalate when risk crosses a boundary." },
-            { icon: ClipboardCheck, title: "Outcome learning", body: "Mentor improves from reviewed edits, rejects, completions, and escalations offline." },
-          ].map(({ icon, title, body }, i) => (
-            <Reveal key={title} delay={i * 0.1}>
-              <Principle icon={icon} title={title}>{body}</Principle>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Principle({
-  icon: Icon,
-  title,
-  children,
-}: {
-  icon: typeof ShieldCheck;
-  title: string;
-  children: string;
-}) {
-  return (
-    <article className="principle-card">
-      <Icon size={23} aria-hidden="true" />
-      <h3>{title}</h3>
-      <p>{children}</p>
-    </article>
-  );
-}
-
 // ─── Clinical Leads ───────────────────────────────────────────────────────────
 
 function ClinicalLeadCase() {
@@ -1400,7 +1336,6 @@ function ClinicalLeadCase() {
         <Reveal>
           <div className="section-heading section-heading--split">
             <div>
-              <p className="eyebrow">For clinicians and clinical leads</p>
               <h2 id="lead-title">Why this can change the way a practice operates.</h2>
             </div>
             <p>
@@ -1421,7 +1356,6 @@ function ClinicalLeadCase() {
         </div>
         <Reveal delay={0.1}>
           <div className="leadership-panel">
-            <h3>Clinical leadership value</h3>
             <div className="leadership-panel__items">
               {leadershipReasons.map((reason) => (
                 <p key={reason}><CheckCircle2 size={18} aria-hidden="true" />{reason}</p>
@@ -1591,7 +1525,6 @@ function PilotCta() {
       <div className="section-shell pilot__grid">
         <Reveal>
           <div>
-            <p className="eyebrow">Clinical Practice Pilot Cohort</p>
             <h2 id="pilot-title">Bring STEMCare into your clinic with dedicated clinical onboarding.</h2>
             <p>
               We are onboarding our founding cohort of private clinics, outpatient practices, and clinical teams.
