@@ -598,12 +598,6 @@ function Hero({ onOpenDemo }: { onOpenDemo?: () => void }) {
         animate="show"
         style={prefersReduced ? undefined : { y: textY, opacity: textOpacity }}
       >
-        <motion.p
-          className="eyebrow hero__eyebrow"
-          variants={prefersReduced ? undefined : heroItemVariant}
-        >
-          Private Healthcare & Specialist Operations
-        </motion.p>
         <motion.h1
           id="hero-title"
           aria-label="STEMCare"
